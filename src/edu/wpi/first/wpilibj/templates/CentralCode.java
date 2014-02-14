@@ -21,20 +21,19 @@ public class CentralCode extends IterativeRobot {
 
     Jaguar jag1, jag2, jag3, jag4;
     Joystick xBox;
-    Victor vic;
+    Victor victor;
     Solenoid sol1, sol2, sol4, sol5, sol7, sol8;
     Relay relay;
-    Drive drive;
-    loadAndShoot load;
-    
+    DigitalInput digi2, digi3;
+    Encoder encoder;
     AnalogChannel ultrasonic;
     double conf;
     boolean ready, goShoot;
     int i;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
+    Drive drive;
+    loadAndShoot loadAndShoot;
 
-/*stevie yougosh darnbutt we need  network tables  or something for the camera 
-    or god help us, we will make you suffer*/
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -44,36 +43,45 @@ public class CentralCode extends IterativeRobot {
         jag2 = new Jaguar(3);
         jag3 = new Jaguar(3);
         jag4 = new Jaguar(4);
+        victor = new Victor(5);
 
         sol1 = new Solenoid(1);
         sol2 = new Solenoid(2);
-        
+
         sol4 = new Solenoid(4);
         sol5 = new Solenoid(5);
-        
+
         sol7 = new Solenoid(7);
         sol8 = new Solenoid(8);
-        
+
         relay = new Relay(1);
+        
+        digi2 = new DigitalInput(2);
+        digi3 = new DigitalInput(3);
+        
+        encoder = new Encoder(1, 2 /*find out how to import encoder, may go into analog channel*/);
 
         xBox = new Joystick(1);
-        
+
         conf = 0;
         i = 0;
         ready = false;
         goShoot = false;
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
-        load = new loadAndShoot(sol4, sol5, sol7, sol8, vic, xBox);
+        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi2, digi3);
     }
 
     /**
      * This function is called periodically during autonomous
      */
-    public void autonomousPeriodic() {
+    public void autonomousInit() {
         relay.set(Relay.Value.kOn);
+    }
+
+    public void autonomousPeriodic() {
         conf = conf + SmartDashboard.getNumber("Confidence") - 70;
-        if (ultrasonic.getVoltage() <= .96){
+        if (ultrasonic.getVoltage() <= .96) {
             jag1.set(0);
             jag3.set(0);
             ready = true;
@@ -81,16 +89,16 @@ public class CentralCode extends IterativeRobot {
             jag1.set(.5);
             jag3.set(.5);
         }
-        if (i >= 100){
+        if (i >= 100) {
             goShoot = false;
             sol1.set(true);
             sol2.set(false);
             i = 0;
         }
-        if (ready && conf >= 100){
+        if (ready && conf >= 100) {
             goShoot = true;
         }
-        if (goShoot){
+        if (goShoot) {
             sol1.set(false);
             sol2.set(true);
             i++;
@@ -101,24 +109,24 @@ public class CentralCode extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopInit() {
+        relay.set(Relay.Value.kOn);
         if (!drive.running) {
             drive.start();
         }
         drive.setRun(true);
-        
-        /*
-        if (!load.running){
-            load.start();
+
+        if (!loadAndShoot.running) {
+            loadAndShoot.start();
         }
-        load.setRun(true);
-        */
+        loadAndShoot.setRun(true);
     }
+
     public void teleopPeriodic() {
     }
 
     public void disabledInit() {
         drive.setRun(false);
-        //load.setRun(false);
+        loadAndShoot.setRun(false);
     }
 
     /**
