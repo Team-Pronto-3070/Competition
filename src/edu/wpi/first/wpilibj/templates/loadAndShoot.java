@@ -95,7 +95,9 @@ public class loadAndShoot extends Thread {
                 if (turnOffSuck) {
                     turnOffSuckCount++;
                 }
-                if (turnOffSuckCount > 250/*<-may need to adjust this number*/) {
+                if (turnOffSuckCount > 250/*
+                         * <-may need to adjust this number
+                         */) {
                     turnOffSuck = false;
                     turnOffSuckCount = 0;
                     okToSuck = true; //to reset the delay on the sucker
@@ -105,15 +107,14 @@ public class loadAndShoot extends Thread {
                 //begin autosuction and manual sucker
                 if (xBox.getRawButton(4) && !doNotSuck) { //toggle on
                     doNotSuck = true;
+                }
+                if (doNotSuck) {
                     doNotSuckCount++;
                 }
-                if (doNotSuck && doNotSuckCount > 150) { //toggle off
+                if (doNotSuckCount > 150) { //toggle off
                     doNotSuck = false;
                     doNotSuckCount = 0;
                     okToSuck = true;
-                }
-                if (xBox.getRawAxis(3) > .95) { //manual suction on
-                    sucking = true;
                 }
                 if (digi2.get() && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck && !turnOffSuck) {
                     sucking = true;
@@ -122,7 +123,9 @@ public class loadAndShoot extends Thread {
                     suckingCount++;
                     SuckUpBall.suckItUp();
                 }
-                if (suckingCount > 20/*<-may need to adjust this number, time for suction*/) {
+                if (suckingCount > 20/*
+                         * <-may need to adjust this number, time for suction
+                         */) {
                     sucking = false;
                     okToSuck = false;
                 }
@@ -141,7 +144,9 @@ public class loadAndShoot extends Thread {
                 if (loadingWithoutBall) {
                     Load.loadWithoutBall();
                 }
-                if (encoder.get() == 0/*<-insert right number*/ || digi3.get()) {
+                if (encoder.get() == 0/*
+                         * <-insert right number
+                         */ || digi3.get()) {
                     victor.set(0);
                     loadingWithBall = false;
                     loadingWithoutBall = false;
@@ -152,10 +157,13 @@ public class loadAndShoot extends Thread {
                 //begin shooter
                 if (xBox.getRawAxis(3) < -.95 && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting) {
                     shooting = true;
+                    Shoot.setCountToZero();
                 }
                 if (shooting && loaded) {
                     Shoot.shootPlusUnload();
-                    if (encoder.get() == 0/*<-insert right number*/) {
+                    if (encoder.get() == 0/*
+                             * <-insert right number
+                             */) {
                         shooting = false;
                         loaded = false;
                     }
@@ -163,8 +171,11 @@ public class loadAndShoot extends Thread {
                 if (shooting && !loaded) {
                     justShootCount++;
                     Shoot.justShoot();
-                    if (justShootCount > 60/*<-may need to adjust this number a little*/) {
+                    if (justShootCount > 60/*
+                             * <-may need to adjust this number a little
+                             */) {
                         shooting = false;
+                        justShootCount = 0;
                     }
                 }
                 //end shooter
@@ -176,7 +187,9 @@ public class loadAndShoot extends Thread {
                 if (unloading) {
                     Unload.unload();
                 }
-                if (encoder.get() == 0/*<-insert right number*/) {
+                if (encoder.get() == 0/*
+                         * <-insert right number
+                         */) {
                     unloading = false;
                     loaded = false;
                     okToSuck = true;
