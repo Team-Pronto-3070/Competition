@@ -23,19 +23,21 @@ public class loadAndShoot extends Thread {
     DigitalInput digi2, digi3;
     Joystick xBox;
     Shoot Shoot;
-    boolean shooting = false;
+    boolean shooting = false; //starts the catapult
     int justShootCount = 0;
     Load Load;
-    boolean loadingWithBall = false;
-    boolean loadingWithoutBall = false;
-    boolean loaded = false;
+    boolean loadingWithBall = false; //loads with more force, to compensate for the ball
+    boolean loadingWithoutBall = false; //loads with less force
+    boolean loaded = false; //checks if the suction arm is in the catapult or not
     Unload Unload;
-    boolean unloading = false;
+    boolean unloading = false; //extends the suction cup
     SuckUpBall SuckUpBall;
-    boolean sucking = false;
-    boolean doNotSuck = false;
-    int noSuckingCount = 0;
+    boolean sucking = false; //begins the autosucker
     int suckingCount = 0;
+    boolean doNotSuck = false; //toggles on/off the auto suction
+    int doNotSuckCount = 0;
+    boolean turnOffSuck = false; //disables the auto suction for 5 seconds (or longer)
+    int turnOffSuckCount = 0; 
 
     public loadAndShoot(Encoder e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d2, DigitalInput d3) {
         victor = v;
@@ -73,31 +75,41 @@ public class loadAndShoot extends Thread {
             sucking = false;
             suckingCount = 0;
             doNotSuck = false;
-            noSuckingCount = 0;
+            doNotSuckCount = 0;
+            turnOffSuck = false;
+            turnOffSuckCount = 0;
             while (running) {
                 //begin unsuction or suction on command
                 if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !loaded) {
-                    if (xBox.getRawButton(3)) {
-                        sol4.set(false); //suction
+                    if (xBox.getRawAxis(3) > .95) { //suction- look at if(sucking){}
+                        sucking = true;
+                    }
+                    if (xBox.getRawButton(3)) { //stop suction
+                        sol4.set(false);
                         sol5.set(true);
-                        doNotSuck = true; // stops the autosucker from picking up again immediately
-                    }
-                    if (xBox.getRawButton(4)) {
-                        sol4.set(true); //stop suction
-                        sol5.set(false);
+                        turnOffSuck = true; // stops the autosucker from picking up again immediately
                     }
                 }
-                if (doNotSuck) {
-                    noSuckingCount++;
+                if (turnOffSuck) {
+                    turnOffSuckCount++;
                 }
-                if (noSuckingCount > 250/*<-may need to adjust this number*/) {
-                    doNotSuck = false;
-                    noSuckingCount = 0;
+                if (turnOffSuckCount > 250/*<-may need to adjust this number*/) {
+                    turnOffSuck = false;
+                    turnOffSuckCount = 0;
                 }
                 //end unsuction or suction on command
 
                 //begin autosucker
-                if (digi2.get() && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && !doNotSuck) {
+                if(xBox.getRawButton(4) && !doNotSuck){ //toggle on
+                    doNotSuck = true;
+                    doNotSuckCount++;
+                }
+                
+                if(xBox.getRawButton(4) && doNotSuck && doNotSuckCount>150){ //toggle off
+                    doNotSuck = false;
+                    doNotSuckCount = 0;
+                }
+                if (digi2.get() && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && !doNotSuck && ! turnOffSuck) {
                     sucking = true;
                 }
                 if (sucking) {
