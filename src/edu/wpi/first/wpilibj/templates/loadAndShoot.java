@@ -81,7 +81,7 @@ public class loadAndShoot extends Thread {
             turnOffSuck = false;
             turnOffSuckCount = 0;
             while (running) {
-                //begin unsuction or suction on command
+                //begin unsuction on command
                 if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !loaded) {
                     if (xBox.getRawAxis(3) > .95) { //suction- look at if(sucking){}
                         sucking = true;
@@ -89,7 +89,6 @@ public class loadAndShoot extends Thread {
                     if (xBox.getRawButton(3)) { //stop suction
                         sol4.set(false);
                         sol5.set(true);
-                        okToSuck = true; //to reset the delay on the sucker
                         turnOffSuck = true; // stops the autosucker from picking up again immediately
                     }
                 }
@@ -99,17 +98,22 @@ public class loadAndShoot extends Thread {
                 if (turnOffSuckCount > 250/*<-may need to adjust this number*/) {
                     turnOffSuck = false;
                     turnOffSuckCount = 0;
+                    okToSuck = true; //to reset the delay on the sucker
                 }
-                //end unsuction or suction on command
+                //end unsuction on command
 
-                //begin autosucker
+                //begin autosuction and manual sucker
                 if (xBox.getRawButton(4) && !doNotSuck) { //toggle on
                     doNotSuck = true;
                     doNotSuckCount++;
                 }
-                if (xBox.getRawButton(4) && doNotSuck && doNotSuckCount > 150) { //toggle off
+                if (doNotSuck && doNotSuckCount > 150) { //toggle off
                     doNotSuck = false;
                     doNotSuckCount = 0;
+                    okToSuck = true;
+                }
+                if (xBox.getRawAxis(3) > .95) { //manual suction on
+                    sucking = true;
                 }
                 if (digi2.get() && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck && !turnOffSuck) {
                     sucking = true;
@@ -122,7 +126,7 @@ public class loadAndShoot extends Thread {
                     sucking = false;
                     okToSuck = false;
                 }
-                //end autosucker
+                //end autosuction and manual suction
 
                 //begin loading
                 if (xBox.getRawButton(6) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && digi2.get()) {
