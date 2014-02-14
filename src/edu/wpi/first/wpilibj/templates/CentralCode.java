@@ -122,6 +122,12 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
+        if (digi3.get()) {
+            SmartDashboard.putBoolean("ArmBack", true);
+        }
+        if (!digi3.get()) {
+            SmartDashboard.putBoolean("ArmBack", false);
+        }
     }
 
     public void disabledInit() {
