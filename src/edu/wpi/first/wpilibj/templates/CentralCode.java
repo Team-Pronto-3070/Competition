@@ -121,9 +121,6 @@ public class CentralCode extends IterativeRobot {
         loadAndShoot.setRun(true);
     }
 
-<<<<<<< HEAD
-    public void  teleopPeriodic() {
-=======
     public void teleopPeriodic() {
         if (digi3.get()) {
             SmartDashboard.putBoolean("ArmBack", true);
@@ -131,7 +128,6 @@ public class CentralCode extends IterativeRobot {
         if (!digi3.get()) {
             SmartDashboard.putBoolean("ArmBack", false);
         }
->>>>>>> 1d1280d47974992dd4cc6868baa12c001d62cab0
     }
 
     public void disabledInit() {

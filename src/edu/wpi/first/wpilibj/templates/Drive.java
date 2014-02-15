@@ -17,7 +17,6 @@ public class Drive extends Thread {
     Jaguar jagleft1, jagright2, jagleft3, jagright4;
     Solenoid sol1, sol2;
     Joystick xBox;
-    
     boolean running = false;
     boolean fast = false;
     double speed, turn;
@@ -39,19 +38,14 @@ public class Drive extends Thread {
     public void run() {
         while (true) {
             while (running) {
-                    speed = xBox.getRawAxis(2);
-                    turn = 0.5 * xBox.getRawAxis(4);
-                    if (turn < 0.1 && turn > -0.1) { //maybe need to adjust this
-                        turn = 0;
-                    }
+                speed = xBox.getRawAxis(2);
+                turn = 0.5 * xBox.getRawAxis(4); //may need to adjust this
+                if (turn < 0.1 && turn > -0.1) { //maybe need to adjust this
+                    turn = 0;
+                }
                 if (fast) {
-<<<<<<< HEAD
-                   jagleft1.set(speed - turn); //may need to adjust drive based on weight
-                    jagright2.set(speed + turn);
-=======
                     jagleft1.set(speed - turn); //may need to adjust drive based on weight
                     jagright2.set(-(speed + turn));
->>>>>>> 1d1280d47974992dd4cc6868baa12c001d62cab0
                 }
                 if (!fast) {
                     jagleft3.set(speed - turn);
