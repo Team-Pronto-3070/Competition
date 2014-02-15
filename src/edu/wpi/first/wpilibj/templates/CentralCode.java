@@ -54,11 +54,11 @@ public class CentralCode extends IterativeRobot {
         sol8 = new Solenoid(8);
 
         relay = new Relay(1);
-        
+
         ultrasonic = new AnalogChannel(8);
         digi2 = new DigitalInput(2);
         digi3 = new DigitalInput(3);
-        
+
         encoder = new AnalogChannel(2);
 
         xBox = new Joystick(1);
@@ -77,8 +77,15 @@ public class CentralCode extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousInit() {
+        conf = 0;
         relay.set(Relay.Value.kOn);
         noWait = 0;
+        sol1.set(true); //change it to fast setting
+        sol2.set(false);
+        sol4.set(true);
+        sol5.set(false);
+        sol7.set(true);
+        sol8.set(false);
     }
 
     public void autonomousPeriodic() {
@@ -88,13 +95,13 @@ public class CentralCode extends IterativeRobot {
             jag3.set(0);
             ready = true;
         } else {
-            jag1.set(.5);
-            jag3.set(-.5);
+            jag1.set(1);
+            jag3.set(-1);
         }
         if (i >= 100) {
             goShoot = false;
-            sol1.set(true);
-            sol2.set(false);
+            sol7.set(true);
+            sol8.set(false);
             i = 0;
         }
         if (ready && conf >= 40) {
@@ -106,9 +113,14 @@ public class CentralCode extends IterativeRobot {
         if (ready && conf < 40 && noWait == 150) {
             goShoot = true;
         }
-        if (goShoot) {
-            sol1.set(false);
-            sol2.set(true);
+        if (goShoot && i < 3) {
+            i++;
+            sol4.set(false);
+            sol5.set(true);
+        }
+        if (goShoot && i >= 3) {
+            sol7.set(false);
+            sol8.set(true);
             i++;
         }
     }
@@ -136,8 +148,8 @@ public class CentralCode extends IterativeRobot {
         if (!digi3.get()) {
             SmartDashboard.putBoolean("ArmBack", false);
         }
-        SmartDashboard.putNumber("Distance in.", 102.4*ultrasonic.getVoltage());
-                //^need to do this as a boolean eventually
+        SmartDashboard.putNumber("Distance in.", 102.4 * ultrasonic.getVoltage());
+        //^need to do this as a boolean eventually
     }
 
     public void disabledInit() {
