@@ -45,12 +45,17 @@ public class Drive extends Thread {
                         turn = 0;
                     }
                 if (fast) {
+<<<<<<< HEAD
                    jagleft1.set(speed - turn); //may need to adjust drive based on weight
                     jagright2.set(speed + turn);
+=======
+                    jagleft1.set(speed - turn); //may need to adjust drive based on weight
+                    jagright2.set(-(speed + turn));
+>>>>>>> 1d1280d47974992dd4cc6868baa12c001d62cab0
                 }
                 if (!fast) {
-                    jagleft1.set(speed - turn);
-                    jagright2.set(speed + turn);
+                    jagleft3.set(speed - turn);
+                    jagright4.set(-(speed + turn));
                 }
                 if (xBox.getRawButton(1)) {
                     sol1.set(false);

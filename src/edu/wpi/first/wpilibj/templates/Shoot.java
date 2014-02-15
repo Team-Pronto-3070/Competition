@@ -30,9 +30,14 @@ public class Shoot extends Thread {
 
         Unload = u;
     }
+    
+    public void setCountToZero(){
+        count = 0;
+    }
 
     public void shootPlusUnload() {
         if (count <= 5) {
+            count++;
             sol4.set(false);
             sol5.set(true);
         }
@@ -50,6 +55,7 @@ public class Shoot extends Thread {
 
     public void justShoot() {
         if (count <= 5) {
+            count++;
             sol4.set(false);
             sol5.set(true);
         }
