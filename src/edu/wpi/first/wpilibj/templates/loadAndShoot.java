@@ -4,11 +4,7 @@
  */
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.*;
 
 /**
  *
@@ -19,7 +15,7 @@ public class loadAndShoot extends Thread {
     boolean running = false;
     Solenoid sol4, sol5, sol7, sol8;
     Victor victor;
-    Encoder encoder;
+    AnalogChannel encoder;
     DigitalInput digi2, digi3;
     Joystick xBox;
     Shoot Shoot;
@@ -39,7 +35,7 @@ public class loadAndShoot extends Thread {
     boolean turnOffSuck = false; //disables the auto suction for 5 seconds (or longer)
     int turnOffSuckCount = 0;
 
-    public loadAndShoot(Encoder e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d2, DigitalInput d3) {
+    public loadAndShoot(AnalogChannel e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d2, DigitalInput d3) {
         victor = v;
         encoder = e;
 
@@ -142,7 +138,7 @@ public class loadAndShoot extends Thread {
                 if (loadingWithoutBall) {
                     Load.loadWithoutBall();
                 }
-                if (encoder.get() == 0/*
+                if (encoder.getVoltage() == 0/*
                          * <-insert right number
                          */ || digi3.get()) {
                     victor.set(0);
@@ -158,7 +154,7 @@ public class loadAndShoot extends Thread {
                 }
                 if (shooting && digi3.get()) {
                     Shoot.shootPlusUnload();
-                    if (encoder.get() == 0/*
+                    if (encoder.getVoltage() == 0/*
                              * <-insert right number
                              */) {
                         shooting = false;
@@ -183,7 +179,7 @@ public class loadAndShoot extends Thread {
                 if (unloading) {
                     Unload.unload();
                 }
-                if (encoder.get() == 0/*
+                if (encoder.getVoltage() == 0/*
                          * <-insert right number
                          */) {
                     unloading = false;

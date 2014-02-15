@@ -25,8 +25,7 @@ public class CentralCode extends IterativeRobot {
     Solenoid sol1, sol2, sol4, sol5, sol7, sol8;
     Relay relay;
     DigitalInput digi2, digi3;
-    Encoder encoder;
-    AnalogChannel ultrasonic;
+    AnalogChannel ultrasonic, encoder;
     double conf;
     boolean ready, goShoot;
     int i, noWait;
@@ -60,7 +59,7 @@ public class CentralCode extends IterativeRobot {
         digi2 = new DigitalInput(2);
         digi3 = new DigitalInput(3);
         
-        encoder = new Encoder(1, 2 /*find out how to import encoder, may go into analog channel*/);
+        encoder = new AnalogChannel(2);
 
         xBox = new Joystick(1);
 
