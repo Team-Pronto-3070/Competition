@@ -29,7 +29,7 @@ public class CentralCode extends IterativeRobot {
     AnalogChannel ultrasonic;
     double conf;
     boolean ready, goShoot;
-    int i;
+    int i, noWait;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
@@ -65,6 +65,7 @@ public class CentralCode extends IterativeRobot {
         xBox = new Joystick(1);
 
         conf = 0;
+        noWait = 0;
         i = 0;
         ready = false;
         goShoot = false;
@@ -78,11 +79,11 @@ public class CentralCode extends IterativeRobot {
      */
     public void autonomousInit() {
         relay.set(Relay.Value.kOn);
+        noWait = 0;
     }
 
     public void autonomousPeriodic() {
         conf = conf + SmartDashboard.getNumber("Confidence") - 70;
-        /*System.out.println(conf);*/
         if (ultrasonic.getVoltage() <= .96) {
             jag1.set(0);
             jag3.set(0);
@@ -97,7 +98,13 @@ public class CentralCode extends IterativeRobot {
             sol2.set(false);
             i = 0;
         }
-        if (ready && conf >= 100) {
+        if (ready && conf >= 40) {
+            goShoot = true;
+        }
+        if (ready && conf < 40) {
+            noWait++;
+        }
+        if (ready && conf < 40 && noWait == 150) {
             goShoot = true;
         }
         if (goShoot) {

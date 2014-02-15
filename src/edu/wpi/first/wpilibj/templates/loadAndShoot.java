@@ -28,7 +28,6 @@ public class loadAndShoot extends Thread {
     Load Load;
     boolean loadingWithBall = false; //loads with more force, to compensate for the ball
     boolean loadingWithoutBall = false; //loads with less force
-    boolean loaded = false; //checks if the suction arm is in the catapult or not
     Unload Unload;
     boolean unloading = false; //extends the suction cup
     SuckUpBall SuckUpBall;
@@ -71,7 +70,6 @@ public class loadAndShoot extends Thread {
             loadingWithBall = false;
             loadingWithoutBall = false;
             unloading = false;
-            loaded = false;
             justShootCount = 0;
             okToSuck = false;
             sucking = false;
@@ -82,7 +80,7 @@ public class loadAndShoot extends Thread {
             turnOffSuckCount = 0;
             while (running) {
                 //begin unsuction on command
-                if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !loaded) {
+                if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !digi3.get()) {
                     if (xBox.getRawAxis(3) > .95) { //suction- look at if(sucking){}
                         sucking = true;
                     }
@@ -150,7 +148,6 @@ public class loadAndShoot extends Thread {
                     victor.set(0);
                     loadingWithBall = false;
                     loadingWithoutBall = false;
-                    loaded = true;
                 }
                 //end loading
 
@@ -159,16 +156,15 @@ public class loadAndShoot extends Thread {
                     shooting = true;
                     Shoot.setCountToZero();
                 }
-                if (shooting && loaded) {
+                if (shooting && digi3.get()) {
                     Shoot.shootPlusUnload();
                     if (encoder.get() == 0/*
                              * <-insert right number
                              */) {
                         shooting = false;
-                        loaded = false;
                     }
                 }
-                if (shooting && !loaded) {
+                if (shooting && !digi3.get()) {
                     justShootCount++;
                     Shoot.justShoot();
                     if (justShootCount > 60/*
@@ -191,7 +187,6 @@ public class loadAndShoot extends Thread {
                          * <-insert right number
                          */) {
                     unloading = false;
-                    loaded = false;
                     okToSuck = true;
                 }
                 //end Unload
