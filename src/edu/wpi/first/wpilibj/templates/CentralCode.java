@@ -81,13 +81,14 @@ public class CentralCode extends IterativeRobot {
 
     public void autonomousPeriodic() {
         conf = conf + SmartDashboard.getNumber("Confidence") - 70;
+        /*System.out.println(conf);*/
         if (ultrasonic.getVoltage() <= .96) {
             jag1.set(0);
             jag3.set(0);
             ready = true;
         } else {
             jag1.set(.5);
-            jag3.set(.5);
+            jag3.set(-.5);
         }
         if (i >= 100) {
             goShoot = false;
