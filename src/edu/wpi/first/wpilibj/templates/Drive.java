@@ -45,7 +45,7 @@ public class Drive extends Thread {
                         turn = 0;
                     }
                 if (fast) {
-                    jagleft1.set(speed - turn); //may need to adjust drive based on weight
+                   jagleft1.set(speed - turn); //may need to adjust drive based on weight
                     jagright2.set(speed + turn);
                 }
                 if (!fast) {

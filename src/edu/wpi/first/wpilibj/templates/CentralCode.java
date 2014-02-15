@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+///*----------------------------------------------------------------------------*/
 /* Copyright (c) FIRST 2008. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * functions corresponding to each mode, as described in the IterativeRobot
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
- * directory.
+ * directory.-
  */
 public class CentralCode extends IterativeRobot {
 
@@ -109,7 +109,7 @@ public class CentralCode extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopInit() {
-        relay.set(Relay.Value.kOn);
+        relay.set(Relay.Value.kOff);
         if (!drive.running) {
             drive.start();
         }
@@ -121,7 +121,7 @@ public class CentralCode extends IterativeRobot {
         loadAndShoot.setRun(true);
     }
 
-    public void teleopPeriodic() {
+    public void  teleopPeriodic() {
     }
 
     public void disabledInit() {
