@@ -129,6 +129,8 @@ public class CentralCode extends IterativeRobot {
         if (!digi3.get()) {
             SmartDashboard.putBoolean("ArmBack", false);
         }
+        SmartDashboard.putNumber("Distance in.", 102.4*ultrasonic.getVoltage());
+                //^need to do this as a boolean eventually
     }
 
     public void disabledInit() {
