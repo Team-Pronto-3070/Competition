@@ -56,6 +56,7 @@ public class CentralCode extends IterativeRobot {
 
         relay = new Relay(1);
         
+        ultrasonic = new AnalogChannel(8);
         digi2 = new DigitalInput(2);
         digi3 = new DigitalInput(3);
         
