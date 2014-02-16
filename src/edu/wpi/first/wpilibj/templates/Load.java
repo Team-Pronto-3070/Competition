@@ -22,6 +22,6 @@ public class Load extends Thread {
     }
 
     public void loadWithoutBall() {
-        victor.set(-0.2/*<-may need to adjust this*/);
+        victor.set(0.2);
     }
 }

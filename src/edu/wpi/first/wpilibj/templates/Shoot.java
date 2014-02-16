@@ -18,7 +18,7 @@ public class Shoot extends Thread {
     int count;
     Unload Unload;
 
-    public Shoot(Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Unload u) {
+    public Shoot(Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8) {
         victor = v;
 
         sol4 = s4;
@@ -27,11 +27,9 @@ public class Shoot extends Thread {
         sol8 = s8;
 
         count = 0;
-
-        Unload = u;
     }
-    
-    public void setCountToZero(){
+
+    public void setCountToZero() {
         count = 0;
     }
 
@@ -41,15 +39,19 @@ public class Shoot extends Thread {
             sol4.set(false);
             sol5.set(true);
         }
-        if (count > 5 && count < 55 /*<-may need to adjust this number a little*/) {
+        if (count > 5 && count < 100 /*
+                 * <-may need to adjust this number a little
+                 */) {
             count++;
             sol7.set(false);
             sol8.set(true);
         }
-        if (count >= 55) {
+        if (count >= 100) {
             sol7.set(true);
             sol8.set(false);
-            Unload.unload();
+            sol4.set(false);
+            sol5.set(true);
+            victor.set(-0.2);
         }
     }
 
@@ -59,12 +61,14 @@ public class Shoot extends Thread {
             sol4.set(false);
             sol5.set(true);
         }
-        if (count > 5 && count < 55 /*<-may need to adjust this number a little*/) {
+        if (count > 5 && count < 100 /*
+                 * <-may need to adjust this number a little
+                 */) {
             count++;
             sol7.set(false);
             sol8.set(true);
         }
-        if (count >= 55) {
+        if (count >= 100) {
             sol7.set(true);
             sol8.set(false);
         }

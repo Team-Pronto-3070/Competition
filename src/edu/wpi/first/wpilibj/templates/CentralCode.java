@@ -26,6 +26,7 @@ public class CentralCode extends IterativeRobot {
     Relay relay;
     DigitalInput digi2, digi3;
     AnalogChannel ultrasonic, encoder;
+    Gyro gyro;
     double conf;
     boolean ready, goShoot;
     int i, noWait;
@@ -39,7 +40,7 @@ public class CentralCode extends IterativeRobot {
      */
     public void robotInit() {
         jag1 = new Jaguar(1);
-        jag2 = new Jaguar(3);
+        jag2 = new Jaguar(2);
         jag3 = new Jaguar(3);
         jag4 = new Jaguar(4);
         victor = new Victor(5);
@@ -55,11 +56,15 @@ public class CentralCode extends IterativeRobot {
 
         relay = new Relay(1);
 
-        ultrasonic = new AnalogChannel(8);
-        digi2 = new DigitalInput(2);
+        digi2 = new DigitalInput(14);
         digi3 = new DigitalInput(3);
 
         encoder = new AnalogChannel(2);
+        ultrasonic = new AnalogChannel(3);
+
+        gyro = new Gyro(1);
+        gyro.setSensitivity(0.07);
+        gyro.reset();
 
         xBox = new Joystick(1);
 
@@ -71,6 +76,8 @@ public class CentralCode extends IterativeRobot {
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
         loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi2, digi3);
+        drive.start();
+        loadAndShoot.start();
     }
 
     /**
@@ -130,14 +137,7 @@ public class CentralCode extends IterativeRobot {
      */
     public void teleopInit() {
         relay.set(Relay.Value.kOff);
-        if (!drive.running) {
-            drive.start();
-        }
         drive.setRun(true);
-
-        if (!loadAndShoot.running) {
-            loadAndShoot.start();
-        }
         loadAndShoot.setRun(true);
     }
 
