@@ -20,8 +20,4 @@ public class Load extends Thread {
 
     public void loadWithBall() {
     }
-
-    public void loadWithoutBall() {
-        victor.set(0.2);
-    }
 }

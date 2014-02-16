@@ -102,9 +102,7 @@ public class loadAndShoot extends Thread {
                 }
                 if (sucking) {
                     suckingCount++;
-                    victor.set(-0.2);
-                    sol4.set(true);
-                    sol5.set(false);
+                    SuckUpBall.suckItUp();
                 }
                 if (suckingCount > 20) {
                     sucking = false;
@@ -125,9 +123,9 @@ public class loadAndShoot extends Thread {
                     Load.loadWithBall();
                 }
                 if (loadingWithoutBall) {
-                    Load.loadWithoutBall();
+                    victor.set(0.2);
                 }
-                if (encoder.getVoltage() == 1.5|| digi3.get()) {
+                if (encoder.getVoltage() <= 1.5|| digi3.get()) {
                     victor.set(0);
                     loadingWithBall = false;
                     loadingWithoutBall = false;
