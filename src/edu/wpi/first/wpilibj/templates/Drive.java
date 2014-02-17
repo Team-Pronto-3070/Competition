@@ -18,7 +18,7 @@ public class Drive extends Thread {
     Solenoid sol1, sol2;
     Joystick xBox;
     boolean running = false;
-    double speed, turn;
+    double speed, turn, leftspeed, rightspeed;
 
     public Drive(Jaguar j1, Jaguar j2, Jaguar j3, Jaguar j4, Solenoid s1, Solenoid s2, Joystick x) {
         jagleft1 = j1;
@@ -50,7 +50,19 @@ public class Drive extends Thread {
                     sol1.set(true);
                     sol2.set(false);
                 }
-                jagleft1.set(speed - turn); //may need to adjust drive based on weight
+                if(leftspeed < speed - turn){
+                    leftspeed = leftspeed + .2;
+                }
+                if(leftspeed > speed - turn){
+                    leftspeed = leftspeed - .2;
+                }
+                if(rightspeed < speed - turn){
+                    rightspeed = rightspeed + .2;
+                }
+                if(rightspeed > speed - turn){
+                    rightspeed = rightspeed - .2;
+                }
+                jagleft1.set(speed - turn);
                 jagleft2.set(speed - turn);
                 jagright3.set(-(speed + turn));
                 jagright4.set(-(speed + turn));

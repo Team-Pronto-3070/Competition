@@ -24,7 +24,7 @@ public class CentralCode extends IterativeRobot {
     Victor victor;
     Solenoid sol1, sol2, sol4, sol5, sol7, sol8;
     Relay relay;
-    DigitalInput digi2, digi3;
+    DigitalInput digi14, digi3;
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
     double conf;
@@ -56,7 +56,7 @@ public class CentralCode extends IterativeRobot {
 
         relay = new Relay(1);
 
-        digi2 = new DigitalInput(14);
+        digi14 = new DigitalInput(14);
         digi3 = new DigitalInput(3);
 
         encoder = new AnalogChannel(2);
@@ -76,7 +76,7 @@ public class CentralCode extends IterativeRobot {
         goShoot = false;
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
-        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi2, digi3);
+        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3);
         drive.start();
         loadAndShoot.start();
     }

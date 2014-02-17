@@ -18,6 +18,6 @@ public class Load extends Thread {
         victor = v;
     }
 
-    public void loadWithBall() {
+    public void load() {
     }
 }
