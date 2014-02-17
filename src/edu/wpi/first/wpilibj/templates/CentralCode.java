@@ -29,7 +29,7 @@ public class CentralCode extends IterativeRobot {
     AnalogChannel ultrasonic;
     double conf;
     boolean ready, goShoot;
-    int i;
+    int i, noWait;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
@@ -66,6 +66,7 @@ public class CentralCode extends IterativeRobot {
 
         conf = 0;
         i = 0;
+        noWait = 0;
         ready = false;
         goShoot = false;
 
@@ -78,31 +79,51 @@ public class CentralCode extends IterativeRobot {
      */
     public void autonomousInit() {
         relay.set(Relay.Value.kOn);
+        noWait = 0;
     }
 
     public void autonomousPeriodic() {
+        if (!ready){
         conf = conf + SmartDashboard.getNumber("Confidence") - 70;
-        /*System.out.println(conf);*/
+        }
         if (ultrasonic.getVoltage() <= .96) {
             jag1.set(0);
             jag3.set(0);
             ready = true;
         } else {
-            jag1.set(.5);
-            jag3.set(-.5);
+            jag1.set(1);
+            jag3.set(-1);
         }
         if (i >= 100) {
             goShoot = false;
-            sol1.set(true);
-            sol2.set(false);
+            sol7.set(false);
+            sol8.set(true);
             i = 0;
         }
-        if (ready && conf >= 100) {
+        if (ready && conf >= 40) {
             goShoot = true;
         }
+        if (ready && conf < 40) {
+            noWait++;
+            if (noWait >= 40 && noWait < 70) {
+                jag1.set(-1);
+                jag3.set(1);
+            }
+            if (noWait >= 70 && noWait < 110) {
+                jag1.set(0);
+                jag3.set(0);
+            }
+            if (noWait >= 110 && noWait < 150) {
+                jag1.set(1);
+                jag3.set(-1);
+            }
+            if (noWait == 150) {
+                goShoot = true;
+            }
+        }
         if (goShoot) {
-            sol1.set(false);
-            sol2.set(true);
+            sol7.set(true);
+            sol8.set(false);
             i++;
         }
     }
@@ -124,18 +145,13 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        if (digi3.get()) {
-            SmartDashboard.putBoolean("ArmBack", true);
-        }
-        if (!digi3.get()) {
-            SmartDashboard.putBoolean("ArmBack", false);
-        }
-        SmartDashboard.putNumber("Distance in.", 102.4*ultrasonic.getVoltage());
+        SmartDashboard.putNumber("Distance in.", 102.4*ultrasonic.getAverageVoltage());
                 //^need to do this as a boolean eventually
     }
 
     public void disabledInit() {
         drive.setRun(false);
+        
         loadAndShoot.setRun(false);
     }
 
