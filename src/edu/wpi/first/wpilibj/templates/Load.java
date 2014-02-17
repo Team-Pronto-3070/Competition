@@ -4,6 +4,7 @@
  */
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
@@ -13,11 +14,18 @@ import edu.wpi.first.wpilibj.Victor;
 public class Load extends Thread {
 
     Victor victor;
+    AnalogChannel encoder;
 
-    public Load(Victor v) {
+    public Load(Victor v, AnalogChannel e) {
         victor = v;
+        encoder = e;
     }
 
     public void load() {
+        if (encoder.getAverageVoltage() > 2.75) {
+            victor.set(.6);
+        } else {
+            victor.set(0.1);
+        }
     }
 }

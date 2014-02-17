@@ -56,16 +56,22 @@ public class Drive extends Thread {
                 if(leftspeed > speed - turn){
                     leftspeed = leftspeed - .2;
                 }
-                if(rightspeed < speed - turn){
+                if(Math.abs(speed - turn - leftspeed) < .1){
+                    leftspeed = speed - turn;
+                }
+                if(rightspeed < speed + turn){
                     rightspeed = rightspeed + .2;
                 }
-                if(rightspeed > speed - turn){
+                if(rightspeed > speed + turn){
                     rightspeed = rightspeed - .2;
                 }
-                jagleft1.set(speed - turn);
-                jagleft2.set(speed - turn);
-                jagright3.set(-(speed + turn));
-                jagright4.set(-(speed + turn));
+                if(Math.abs(speed + turn - leftspeed) < .1){
+                    leftspeed = speed + turn;
+                }
+                jagleft1.set(leftspeed);
+                jagleft2.set(leftspeed);
+                jagright3.set(-(rightspeed));
+                jagright4.set(-(rightspeed));
             }
         }
     }

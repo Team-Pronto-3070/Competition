@@ -49,7 +49,7 @@ public class loadAndShoot extends Thread {
         digi3 = d3;
 
         shooter = new Shoot(victor, sol4, sol5, sol7, sol8);
-        Load = new Load(victor);
+        Load = new Load(victor, encoder);
         Unload = new Unload(victor, sol4, sol5);
         SuckUpBall = new SuckUpBall(victor, sol4, sol5);
     }
