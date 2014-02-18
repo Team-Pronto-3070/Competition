@@ -192,8 +192,6 @@ public class CentralCode extends IterativeRobot {
                 jag3.set(0);
                 jag4.set(0);
                 if (endTimer == 100) { //at end of autonomous, do the following
-                    sol7.set(true); //last ditch effort to launch ball, swithced these?????????????????????
-                    sol8.set(false);
                     System.out.println("Autonomous Complete.");
                 }
             }
