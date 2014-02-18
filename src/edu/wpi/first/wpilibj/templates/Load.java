@@ -21,7 +21,7 @@ public class Load extends Thread {
         encoder = e;
     }
 
-    public void load() {
+    public void loadWithBall() {
         if (encoder.getVoltage() > 3 || encoder.getVoltage() < 0.5) {
             victor.set(0.6);
         } else {
