@@ -23,4 +23,9 @@ public class Unload extends Thread {
         sol5.set(true);
         victor.set(-0.3);
     }
+    public void unloadWithBall() {
+        sol4.set(true);
+        sol5.set(false);
+        victor.set(-0.7);
+    }
 }
