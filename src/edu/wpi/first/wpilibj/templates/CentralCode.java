@@ -161,7 +161,9 @@ public class CentralCode extends IterativeRobot {
         loadAndShoot.setRun(true);
     }
 
-    public void teleopPeriodic() {        
+    public void teleopPeriodic() {
+        server.putBoolean("fast gear", sol1.get() == true && sol2.get() == false);
+
         if (gyro.getAngle() > 360 || gyro.getAngle() < -360) {
             gyro.reset();
         }

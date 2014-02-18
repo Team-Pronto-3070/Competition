@@ -37,10 +37,10 @@ public class Drive extends Thread {
     public void run() {
         while (true) {
             while (running) {
-                if (xBox.getRawAxis(2) > 0) {
-                    speed = xBox.getRawAxis(2) * xBox.getRawAxis(2);
+                if (xBox.getRawAxis(2) >= 0) {
+                    speed = Math.sqrt(xBox.getRawAxis(2) * xBox.getRawAxis(2) * xBox.getRawAxis(2));
                 } else {
-                    speed = -(xBox.getRawAxis(2) * xBox.getRawAxis(2));
+                    speed = -Math.sqrt(-xBox.getRawAxis(2) * (xBox.getRawAxis(2) * xBox.getRawAxis(2)));
                 }
                 turn = 0.5 * xBox.getRawAxis(4); //may need to adjust this
                 if (turn < 0.1 && turn > -0.1) { //maybe need to adjust this
@@ -63,7 +63,7 @@ public class Drive extends Thread {
                 if (leftspeed > speed - turn) { //ramp down
                     leftspeed = leftspeed - .15;
                 }
-                
+
                 if (Math.abs((speed + turn) - leftspeed) < .1/*0.075*/) { //don't skip target
                     rightspeed = speed + turn;
                 }
@@ -73,7 +73,7 @@ public class Drive extends Thread {
                 if (rightspeed > speed + turn) {//ramp down
                     rightspeed = rightspeed - .15;
                 }
-                
+
                 if (Math.abs(rightspeed) < .125) { //dead zone
                     rightspeed = 0;
                 }
