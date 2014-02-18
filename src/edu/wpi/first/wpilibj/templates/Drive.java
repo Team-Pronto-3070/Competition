@@ -43,6 +43,9 @@ public class Drive extends Thread {
                     speed = -(xBox.getRawAxis(2) * xBox.getRawAxis(2));
                 }
                 turn = 0.5 * xBox.getRawAxis(4); //may need to adjust this
+                if (turn < 0.1 && turn > -0.1) { //maybe need to adjust this
+                    turn = 0;
+                }
                 if (xBox.getRawButton(1)) {
                     sol1.set(false);
                     sol2.set(true);
@@ -51,31 +54,30 @@ public class Drive extends Thread {
                     sol1.set(true);
                     sol2.set(false);
                 }
-                if (turn < 0.1 && turn > -0.1) { //maybe need to adjust this
-                    turn = 0;
-                }
-                if (leftspeed < speed - turn) {
-                    leftspeed = leftspeed + .15;
-                }
-                if (leftspeed > speed - turn) {
-                    leftspeed = leftspeed - .15;
-                }
-                if (Math.abs(speed - turn - leftspeed) < .075) {
+                if (Math.abs((speed - turn) - leftspeed) < .1/*.075*/) { //don't skip target
                     leftspeed = speed - turn;
                 }
-                if (rightspeed < speed + turn) {
+                if (leftspeed < speed - turn) { //ramp up
+                    leftspeed = leftspeed + .15;
+                }
+                if (leftspeed > speed - turn) { //ramp down
+                    leftspeed = leftspeed - .15;
+                }
+                
+                if (Math.abs((speed + turn) - leftspeed) < .1/*0.075*/) { //don't skip target
+                    rightspeed = speed + turn;
+                }
+                if (rightspeed < speed + turn) { //ramp up
                     rightspeed = rightspeed + .15;
                 }
-                if (rightspeed > speed + turn) {
+                if (rightspeed > speed + turn) {//ramp down
                     rightspeed = rightspeed - .15;
                 }
-                if (Math.abs(speed + turn - leftspeed) < .075) {
-                    leftspeed = speed + turn;
-                }
-                if (Math.abs(rightspeed) < .125) {
+                
+                if (Math.abs(rightspeed) < .125) { //dead zone
                     rightspeed = 0;
                 }
-                if (Math.abs(leftspeed) < .125) {
+                if (Math.abs(leftspeed) < .125) { //dead zone
                     leftspeed = 0;
                 }
                 jagleft1.set(leftspeed);

@@ -74,12 +74,12 @@ public class loadAndShoot extends Thread {
             while (running) {
                 //begin suction on command
                 if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !digi3.get()) {
-                    if (xBox.getRawAxis(3) > .8) { //turns on suction manually
+                    if (xBox.getRawAxis(3) > .95) { //turns on suction manually
                         System.out.println("manual start suction");
                         sucking = true; //turns on the suction
                     }
                 }
-                //end suctions on command
+                //end suction on command
 
                 //begin autosuction and manual suction
                 if (xBox.getRawButton(3)) { //toggle off
@@ -103,7 +103,7 @@ public class loadAndShoot extends Thread {
                     SuckUpBall.suckItUp(); //suction command
                 }
                 if (suckingCount > 75) { //ends autosuction
-                    System.out.println("end suctions");
+                    System.out.println("end suction");
                     suckingCount = 0;
                     victor.set(0); //stops the victor movement
                     sucking = false;

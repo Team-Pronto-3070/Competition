@@ -30,7 +30,7 @@ public class Load extends Thread {
     }
     public void loadWithoutBall(){
         if (encoder.getVoltage() > 3 || encoder.getVoltage() < 0.5) {
-            victor.set(.4);
+            victor.set(0.4);
         } else {
             victor.set(0.2);
         }
