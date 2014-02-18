@@ -72,13 +72,6 @@ public class loadAndShoot extends Thread {
             suckingCount = 0;
             doNotSuck = false;
             while (running) {
-                //System.out.println(victor.get());
-                //System.out.println(encoder.getVoltage());
-                if (digi3.get()) {
-                    System.out.println("digi3");
-                    sol4.set(false);
-                    sol5.set(true);
-                }
                 //begin suction on command
                 if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !digi3.get()) {
                     if (xBox.getRawAxis(3) > .8) { //suction- look at if(sucking){}
@@ -139,6 +132,8 @@ public class loadAndShoot extends Thread {
                 }
                 if (digi3.get()) {
                     System.out.println("load stop");
+                    sol4.set(false);
+                    sol5.set(true);
                     victor.set(0);
                     loadingWithBall = false;
                     loadingWithoutBall = false;

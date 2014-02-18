@@ -28,7 +28,7 @@ public class CentralCode extends IterativeRobot {
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
     double conf;
-    boolean atShoot, afterShoot;
+    boolean atShoot, afterShoot, inRange;
     int endTimer, noWait;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
@@ -160,14 +160,12 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        SmartDashboard.putNumber("Distance in.", 102.4 * ultrasonic.getAverageVoltage());
-        //^need to do this as a boolean eventually
-        if (digi3.get()) {
-            SmartDashboard.putBoolean("ArmBack", true);
+        if (ultrasonic.getVoltage() > 0.7 && ultrasonic.getVoltage() < 1) {
+            inRange = true;
+        } else{
+            inRange = false;
         }
-        if (!digi3.get()) {
-            SmartDashboard.putBoolean("ArmBack", false);
-        }
+        SmartDashboard.putBoolean("In Range", inRange);
     }
 
     public void disabledInit() {
