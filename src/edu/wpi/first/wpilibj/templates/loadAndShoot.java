@@ -5,6 +5,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 /**
  *
@@ -31,8 +32,9 @@ public class loadAndShoot extends Thread {
     boolean sucking = false; //begins the autosuction
     int suckingCount = 0;
     boolean doNotSuck = false; //stops the autosuction from screwing up
+    NetworkTable server;
 
-    public loadAndShoot(AnalogChannel e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d14, DigitalInput d3) {
+    public loadAndShoot(AnalogChannel e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d14, DigitalInput d3, NetworkTable smart) {
         victor = v;
         encoder = e;
 
@@ -46,6 +48,8 @@ public class loadAndShoot extends Thread {
 
         digi14 = d14;
         digi3 = d3;
+
+        server = smart;
 
         shooter = new Shoot(sol4, sol5, sol7, sol8);
         Load = new Load(victor, encoder);
@@ -72,6 +76,7 @@ public class loadAndShoot extends Thread {
             suckingCount = 0;
             doNotSuck = false;
             while (running) {
+                server.putBoolean("auto suction enabled", !doNotSuck && okToSuck);
                 //begin suction on command
                 if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !digi3.get()) {
                     if (xBox.getRawAxis(3) > .95) { //turns on suction manually
