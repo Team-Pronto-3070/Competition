@@ -33,6 +33,7 @@ public class CentralCode extends IterativeRobot {
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
+    SmartDashboard smart;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -73,13 +74,13 @@ public class CentralCode extends IterativeRobot {
         endTimer = 0;
         noWait = 0;
         gyroTimer = 0;
-        
+
         atShoot = false;
         afterShoot = false;
         checkGyro = true;
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
-        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3, server);
+        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3, smart);
         drive.start();
         loadAndShoot.start();
     }
@@ -94,14 +95,14 @@ public class CentralCode extends IterativeRobot {
         relay.set(Relay.Value.kOn);
         noWait = 0;
         gyroTimer = 0;
-        
+
         sol1.set(true); //change it to fast setting
         sol2.set(false);
         sol4.set(false);
         sol5.set(true);
         sol7.set(true);
         sol8.set(false);
-        
+
         atShoot = false;
         afterShoot = false;
         checkGyro = false;
@@ -208,33 +209,33 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        server.putBoolean("fast gear", sol1.get() == true && sol2.get() == false);
+        smart.putBoolean("fast gear", sol1.get() == true && sol2.get() == false);
 
         if (gyro.getAngle() > 360 || gyro.getAngle() < -360) {
             gyro.reset();
         }
-        server.putNumber("Angle", gyro.getAngle());
+        smart.putNumber("Angle", gyro.getAngle());
 
         if (ultrasonic.getVoltage() < 0.7) {
             tooClose = true;
         } else {
             tooClose = false;
         }
-        server.putBoolean("Too close", tooClose);
+        smart.putBoolean("Too close", tooClose);
 
         if (ultrasonic.getVoltage() > 1) {
             tooFar = true;
         } else {
             tooFar = false;
         }
-        server.putBoolean("Too far", tooFar);
+        smart.putBoolean("Too far", tooFar);
 
         if (ultrasonic.getVoltage() > 0.7 && ultrasonic.getVoltage() < 1) {
             inRange = true;
         } else {
             inRange = false;
         }
-        server.putBoolean("In range", inRange);
+        smart.putBoolean("In range", inRange);
     }
 
     public void TeleopdisabledInit() {
