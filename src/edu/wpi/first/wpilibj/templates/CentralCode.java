@@ -109,7 +109,6 @@ public class CentralCode extends IterativeRobot {
                 jag3.set(0.6);
                 jag4.set(0.6);
                 System.out.println("Driving forward.");
-                //420 blaze it
             } else {
                 jag1.set(0);
                 jag2.set(0);
@@ -131,7 +130,7 @@ public class CentralCode extends IterativeRobot {
                     System.out.println("Did not see target.");
                 }
                 noWait++;
-                if (ultrasonic.getVoltage() > 0.85) {
+                /*if (ultrasonic.getVoltage() > 0.85) {
                     jag1.set(-0.216);
                     jag2.set(-0.216);
                     jag3.set(0.2);
@@ -142,7 +141,7 @@ public class CentralCode extends IterativeRobot {
                     jag2.set(0.216);
                     jag3.set(-0.2);
                     jag4.set(-0.2);
-                }
+                }*/
                 if (noWait == 200) {
                     sol7.set(false);
                     sol8.set(true);
@@ -165,7 +164,6 @@ public class CentralCode extends IterativeRobot {
                 relay.set(Relay.Value.kOff);
                 sol7.set(true);
                 sol8.set(false);
-                System.out.println("Autonomous Complete.");
             }
         }
     }
