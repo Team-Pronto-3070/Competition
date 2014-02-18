@@ -28,8 +28,8 @@ public class CentralCode extends IterativeRobot {
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
     double conf;
-    boolean atShoot, afterShoot, inRange, tooClose, tooFar;
-    int endTimer, noWait;
+    boolean atShoot, checkGyro, afterShoot, inRange, tooClose, tooFar;
+    int endTimer, noWait, gyroTimer;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
@@ -72,8 +72,11 @@ public class CentralCode extends IterativeRobot {
         noWait = 0;
         endTimer = 0;
         noWait = 0;
+        gyroTimer = 0;
+        
         atShoot = false;
         afterShoot = false;
+        checkGyro = true;
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
         loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3, server);
@@ -90,33 +93,72 @@ public class CentralCode extends IterativeRobot {
         conf = 0;
         relay.set(Relay.Value.kOn);
         noWait = 0;
+        gyroTimer = 0;
+        
         sol1.set(true); //change it to fast setting
         sol2.set(false);
         sol4.set(false);
         sol5.set(true);
         sol7.set(true);
         sol8.set(false);
+        
         atShoot = false;
         afterShoot = false;
+        checkGyro = false;
     }
 
     public void autonomousPeriodic() {
         System.out.println("Confidence: " + conf);
-        if (!atShoot) { //if program does not know it's in range, do the following
+        if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
             if (ultrasonic.getVoltage() > 0.86) { //if not in range, do the following
                 conf = conf + SmartDashboard.getNumber("Confidence") - 70; //add to the total confidence
                 jag1.set(-0.648); //move towards the goal
                 jag2.set(-0.648);
                 jag3.set(0.6);
                 jag4.set(0.6);
-                System.out.println("Driving forward.");
+                System.out.println("Driving forwards.");
             } else { //once in range, do the follwing
                 jag1.set(0); //stop moving forwards
                 jag2.set(0);
                 jag3.set(0);
                 jag4.set(0);
-                atShoot = true; // tell the program it's in position
-                System.out.println("Done 420 blazin'.");
+                checkGyro = true; // tell the program to check the gyro
+                System.out.println("Checking gyro.");
+            }
+        }
+        if (checkGyro) {
+            gyroTimer++;
+            if (gyro.getAngle() < -2) { //if the robot is pointed to the left, do the following
+                jag1.set(-0.108); //turn right
+                jag2.set(-0.108);
+                jag3.set(-0.1);
+                jag4.set(-0.1);
+                System.out.println("Orienting right.");
+            }
+            if (gyro.getAngle() > 2) { //if the robot is pointed to the right, do the following
+                jag1.set(0.108); //turn left
+                jag2.set(0.108);
+                jag3.set(0.1);
+                jag4.set(0.1);
+                System.out.println("Orienting left.");
+            }
+            if (gyro.getAngle() > -2 && gyro.getAngle() < 2) { // if the robot is pointed towards the goal, do the following
+                jag1.set(0); //stop the motion of the robot
+                jag2.set(0);
+                jag3.set(0);
+                jag4.set(0);
+                checkGyro = false; //stop looking at the gyro
+                atShoot = true; //tell the program that the robot is in position
+                System.out.println("Oriented.");
+            }
+            if (gyroTimer == 30) { //after three fifths second of checking the gyro, do the following
+                jag1.set(0); //stop the motion of the robot
+                jag2.set(0);
+                jag3.set(0);
+                jag4.set(0);
+                checkGyro = false; //stop looking at the gyro
+                atShoot = true; //tell the program that the robot is in position
+                System.out.println("Gyro check timed out.");
             }
         }
         if (atShoot && !afterShoot) { //once in position, do the following
@@ -146,7 +188,11 @@ public class CentralCode extends IterativeRobot {
                 jag2.set(0);
                 jag3.set(0);
                 jag4.set(0);
-                System.out.println("Autonomous Complete.");
+                if (endTimer == 100) { //at end of autonomous, do the following
+                    sol7.set(false); //last ditch effort to launch ball
+                    sol8.set(true);
+                    System.out.println("Autonomous Complete.");
+                }
             }
         }
     }
