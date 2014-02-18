@@ -101,69 +101,51 @@ public class CentralCode extends IterativeRobot {
 
     public void autonomousPeriodic() {
         System.out.println("Confidence: " + conf);
-        if (!atShoot) {
-            if (ultrasonic.getVoltage() > 0.86) {
-                conf = conf + SmartDashboard.getNumber("Confidence") - 70;
-                jag1.set(-0.648);
+        if (!atShoot) { //if program does not know it's in range, do the following
+            if (ultrasonic.getVoltage() > 0.86) { //if not in range, do the following
+                conf = conf + SmartDashboard.getNumber("Confidence") - 70; //add to the total confidence
+                jag1.set(-0.648); //move towards the goal
                 jag2.set(-0.648);
                 jag3.set(0.6);
                 jag4.set(0.6);
                 System.out.println("Driving forward.");
-            } else {
-                jag1.set(0);
+            } else { //once in range, do the follwing
+                jag1.set(0); //stop moving forwards
                 jag2.set(0);
                 jag3.set(0);
                 jag4.set(0);
-                atShoot = true;
+                atShoot = true; // tell the program it's in position
                 System.out.println("Done 420 blazin'.");
             }
         }
-        if (atShoot && !afterShoot) {
-            if (conf >= 40) {
+        if (atShoot && !afterShoot) { //once in position, do the following
+            if (conf >= 40) { //if the target has been seen, do the following
                 System.out.println("Saw Target.");
-                sol7.set(false);
+                sol7.set(false); //launch the catapult
                 sol8.set(true);
-                afterShoot = true;
+                afterShoot = true; //tell the program it has fired
                 System.out.println("Launching.");
-            } else {
-                if (noWait == 0) {
+            } else { //if the target has not been seen, do the following
+                if (noWait == 0) { //reset the timer for this occasion
                     System.out.println("Did not see target.");
                 }
-                noWait++;
-                /*if (ultrasonic.getVoltage() > 0.85) {
-                    jag1.set(-0.216);
-                    jag2.set(-0.216);
-                    jag3.set(0.2);
-                    jag4.set(0.2);
-                }
-                if (ultrasonic.getVoltage() < 0.81) {
-                    jag1.set(0.216);
-                    jag2.set(0.216);
-                    jag3.set(-0.2);
-                    jag4.set(-0.2);
-                }*/
-                if (noWait == 200) {
-                    sol7.set(false);
+                noWait++; //count the timer up
+                if (noWait == 200) { //once the rimer reaches 4 seconds, do the following
+                    sol7.set(false); //launch the catapult
                     sol8.set(true);
-                    afterShoot = true;
+                    afterShoot = true; //tell the program it has fired
                     System.out.println("Launching.");
                 }
             }
         }
-        if (afterShoot) {
-            if (endTimer < 100) {
-                endTimer++;
-                jag1.set(0);
+        if (afterShoot) { //once the program knows it has fired, do the following
+            if (endTimer < 100) { // for two seconds after firing, do the following
+                endTimer++; //run the ending timer
+                jag1.set(0); //stop any motion of the robot
                 jag2.set(0);
                 jag3.set(0);
                 jag4.set(0);
-                if (endTimer == 99) {
-                    System.out.println("Retracting Launcher.");
-                }
-            } else {
-                relay.set(Relay.Value.kOff);
-                sol7.set(true);
-                sol8.set(false);
+                System.out.println("Autonomous Complete.");
             }
         }
     }
