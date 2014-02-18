@@ -20,9 +20,8 @@ public class loadAndShoot extends Thread {
     Joystick xBox;
     Shoot shooter;
     boolean shooting = false; //starts the catapult
-    int justShootCount = 0;
+    int ShootCount = 0;
     Load Load;
-    boolean loaded = false;
     boolean loadingWithBall = false; //loads with more force, to compensate for the ball
     boolean loadingWithoutBall = false; //loads with less force
     Unload Unload;
@@ -60,49 +59,60 @@ public class loadAndShoot extends Thread {
 
     public void run() {
         while (true) {
+            sol7.set(true);
+            sol8.set(false);
             victor.set(0);
             shooting = false;
             loadingWithBall = false;
             loadingWithoutBall = false;
-            loaded = false;
             unloading = false;
-            justShootCount = 0;
+            ShootCount = 0;
             okToSuck = true;
             sucking = false;
             suckingCount = 0;
             doNotSuck = false;
             while (running) {
+                //System.out.println(victor.get());
+                //System.out.println(encoder.getVoltage());
                 if (digi3.get()) {
-                    loaded = true;
+                    System.out.println("digi3");
+                    sol4.set(false);
+                    sol5.set(true);
                 }
                 //begin suction on command
                 if (!loadingWithBall && !loadingWithoutBall && !shooting && !sucking && !digi3.get()) {
                     if (xBox.getRawAxis(3) > .8) { //suction- look at if(sucking){}
+                        System.out.println("manual suction");
                         sucking = true;
                     }
                 }
                 //end suctions on command
 
                 //begin autosuction and manual suction
-                if (xBox.getRawButton(4)) { //toggle on
+                if (xBox.getRawButton(3)) { //toggle off
+                    System.out.println("off suction");
                     sol4.set(false);
                     sol5.set(true);
+                    okToSuck = false;
+                }
+                if (xBox.getRawButton(4)) { //toggle on
+                    System.out.println("on suction");
                     okToSuck = true;
                     doNotSuck = false;
                 }
-                if (xBox.getRawButton(3)) { //toggle off
-                    okToSuck = false;
-                }
-                System.out.println("doNotSuck: " + doNotSuck);
-                System.out.println("okToSuck" + okToSuck);
                 if (digi14.get() && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck) {
                     sucking = true;
+                    System.out.println("auto suction");
                 }
                 if (sucking) {
+                    System.out.println("is autosuction");
                     suckingCount++;
                     SuckUpBall.suckItUp();
                 }
-                if (suckingCount > 20) {
+                if (suckingCount > 100) {
+                    suckingCount = 0;
+                    victor.set(0);
+                    System.out.println("end asuction");
                     sucking = false;
                     doNotSuck = true;
                 }
@@ -110,26 +120,28 @@ public class loadAndShoot extends Thread {
 
                 //begin loading
                 if (xBox.getRawButton(6) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting) {
-                    System.out.println("3");
-                    if (digi14.get()) {
+                    if (sol4.get()==true && sol5.get()==false) {
+                        System.out.println("lead with ball");
                         loadingWithBall = true;
                     }
-                    if (!digi14.get()) {
+                    if (sol4.get()==false && sol5.get()==true) {
+                        System.out.println("lead w/out ball");
                         loadingWithoutBall = true;
                     }
                 }
                 if (loadingWithBall) {
+                    System.out.println("LOAD w/ ball");
                     Load.load();
                 }
                 if (loadingWithoutBall) {
-                    victor.set(0.3);
+                    System.out.println("load w/out ball");
+                    Load.loadWithoutBall();
                 }
-                if (encoder.getVoltage() <= 1.5|| digi3.get()) {
+                if (digi3.get()) {
+                    System.out.println("load stop");
                     victor.set(0);
                     loadingWithBall = false;
                     loadingWithoutBall = false;
-                    sol4.set(false);
-                    sol5.set(true);
                 }
                 //end loading
 
@@ -138,23 +150,13 @@ public class loadAndShoot extends Thread {
                     shooting = true;
                     shooter.setCountToZero();
                 }
-                if (shooting && (loaded || digi3.get())) {
-                    shooter.shootPlusUnload();
-                    if (encoder.getVoltage() >= 3.75) {
+                if (shooting) {
+                    ShootCount++;
+                    shooter.Shoot();
+                    if (ShootCount > 105) {
+                        System.out.println("yend shoot");
                         shooting = false;
-                        loaded = false;
-                        victor.set(0);
-                        doNotSuck = false;
-                    }
-                }
-                if (shooting && !loaded && !digi3.get()) {
-                    justShootCount++;
-                    shooter.justShoot();
-                    if (justShootCount > 105/*
-                             * <-may need to adjust this number a little
-                             */) {
-                        shooting = false;
-                        justShootCount = 0;
+                        ShootCount = 0;
                     }
                 }
                 //end shooter
@@ -162,14 +164,16 @@ public class loadAndShoot extends Thread {
                 //begin Unload
                 if (xBox.getRawButton(5) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting) {
                     unloading = true;
+                    System.out.println("unload");
                 }
                 if (unloading) {
+                    System.out.println("Yunload");
                     Unload.unload();
                 }
-                if (encoder.getVoltage() >= 3.75) {
+                if (encoder.getVoltage() >= 2.5 && encoder.getVoltage() <= 3.8 && unloading) {
+                    System.out.println("end yunload");
                     unloading = false;
                     okToSuck = true;
-                    loaded = false;
                     victor.set(0);
                     doNotSuck = false;
                 }

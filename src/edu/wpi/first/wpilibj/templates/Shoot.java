@@ -31,31 +31,10 @@ public class Shoot extends Thread {
 
     public void setCountToZero() {
         count = 0;
+    
     }
 
-    public void shootPlusUnload() {
-        if (count <= 5) {
-            count++;
-            sol4.set(false);
-            sol5.set(true);
-        }
-        if (count > 5 && count < 100 /*
-                 * <-may need to adjust this number a little
-                 */) {
-            count++;
-            sol7.set(false);
-            sol8.set(true);
-        }
-        if (count >= 100) {
-            sol7.set(true);
-            sol8.set(false);
-            sol4.set(false);
-            sol5.set(true);
-            victor.set(-0.2);
-        }
-    }
-
-    public void justShoot() {
+    public void Shoot() {
         if (count <= 5) {
             count++;
             sol4.set(false);

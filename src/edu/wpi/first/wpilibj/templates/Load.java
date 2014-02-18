@@ -22,10 +22,17 @@ public class Load extends Thread {
     }
 
     public void load() {
-        if (encoder.getAverageVoltage() > 2.75) {
-            victor.set(.6);
+        if (encoder.getVoltage() > 3 || encoder.getVoltage() < 0.5) {
+            victor.set(0.6);
         } else {
             victor.set(0.1);
+        }
+    }
+    public void loadWithoutBall(){
+        if (encoder.getVoltage() > 3 || encoder.getVoltage() < 0.5) {
+            victor.set(.4);
+        } else {
+            victor.set(0.2);
         }
     }
 }

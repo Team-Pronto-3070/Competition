@@ -25,6 +25,6 @@ public class Unload extends Thread {
     public void unload() {
         sol4.set(false);
         sol5.set(true);
-        victor.set(-0.2/*<-may need to change this number*/);
+        victor.set(-0.3/*<-may need to change this number*/);
     }
 }
