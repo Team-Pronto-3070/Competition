@@ -54,20 +54,20 @@ public class Drive extends Thread {
                     leftspeed = speed - turn;
                 }
                 if (leftspeed < speed - turn) { //ramp up
-                    leftspeed = leftspeed + .15;
+                    leftspeed = leftspeed + .1;
                 }
                 if (leftspeed > speed - turn) { //ramp down
-                    leftspeed = leftspeed - .15;
+                    leftspeed = leftspeed - .1;
                 }
 
                 if (Math.abs((speed + turn) - leftspeed) < .1/*0.075*/) { //don't skip target
                     rightspeed = speed + turn;
                 }
                 if (rightspeed < speed + turn) { //ramp up
-                    rightspeed = rightspeed + .15;
+                    rightspeed = rightspeed + .1;
                 }
                 if (rightspeed > speed + turn) {//ramp down
-                    rightspeed = rightspeed - .15;
+                    rightspeed = rightspeed - .1;
                 }
 
                 if (Math.abs(rightspeed) < .125) { //dead zone
