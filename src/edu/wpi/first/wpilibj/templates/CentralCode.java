@@ -108,6 +108,7 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
+        relay.set(Relay.Value.kOn);
         System.out.println("Confidence: " + conf);
         if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
             if (ultrasonic.getVoltage() > 0.86) { //if not in range, do the following
@@ -164,18 +165,19 @@ public class CentralCode extends IterativeRobot {
         if (atShoot && !afterShoot) { //once in position, do the following
             if (conf >= 40) { //if the target has been seen, do the following
                 System.out.println("Saw Target.");
-                sol7.set(false); //launch the catapult
-                sol8.set(true);
+                sol7.set(true); //launch the catapult, switched these??????????????????????
+                sol8.set(false);
                 afterShoot = true; //tell the program it has fired
                 System.out.println("Launching.");
-            } else { //if the target has not been seen, do the following
+            }
+            if (conf < 40) { //if the target has not been seen, do the following
                 if (noWait == 0) { //reset the timer for this occasion
                     System.out.println("Did not see target.");
                 }
                 noWait++; //count the timer up
                 if (noWait == 200) { //once the rimer reaches 4 seconds, do the following
-                    sol7.set(false); //launch the catapult
-                    sol8.set(true);
+                    sol7.set(true); //launch the catapult, switched these??????????????????
+                    sol8.set(false);
                     afterShoot = true; //tell the program it has fired
                     System.out.println("Launching.");
                 }
@@ -189,8 +191,8 @@ public class CentralCode extends IterativeRobot {
                 jag3.set(0);
                 jag4.set(0);
                 if (endTimer == 100) { //at end of autonomous, do the following
-                    sol7.set(false); //last ditch effort to launch ball
-                    sol8.set(true);
+                    sol7.set(true); //last ditch effort to launch ball, swithced these?????????????????????
+                    sol8.set(false);
                     System.out.println("Autonomous Complete.");
                 }
             }
