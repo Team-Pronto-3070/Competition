@@ -237,7 +237,7 @@ public class CentralCode extends IterativeRobot {
         server.putBoolean("In range", inRange);
     }
 
-    public void disabledInit() {
+    public void TeleopdisabledInit() {
         drive.setRun(false);
 
         loadAndShoot.setRun(false);

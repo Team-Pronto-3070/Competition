@@ -8,10 +8,6 @@ import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 
-/**
- *
- * @author pronto1
- */
 public class Drive extends Thread {
 
     Jaguar jagleft1, jagright3, jagleft2, jagright4;

@@ -7,10 +7,6 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Victor;
 
-/**
- *
- * @author pronto1
- */
 public class Shoot extends Thread {
 
     Victor victor;
@@ -37,9 +33,7 @@ public class Shoot extends Thread {
             sol4.set(false);
             sol5.set(true);
         }
-        if (count > 5 && count < 200 /*
-                 * <-may need to adjust this number a little
-                 */) {
+        if (count > 5 && count < 200) {
             count++;
             sol7.set(false);
             sol8.set(true);

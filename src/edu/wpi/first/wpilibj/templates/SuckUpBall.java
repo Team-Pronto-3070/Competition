@@ -7,10 +7,6 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Victor;
 
-/**
- *
- * @author Connor
- */
 public class SuckUpBall {
 
     Victor victor;

@@ -7,10 +7,6 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Victor;
 
-/**
- *
- * @author pronto1
- */
 public class Unload extends Thread {
 
     Victor victor;
@@ -25,6 +21,6 @@ public class Unload extends Thread {
     public void unload() {
         sol4.set(false);
         sol5.set(true);
-        victor.set(-0.3/*<-may need to change this number*/);
+        victor.set(-0.3);
     }
 }

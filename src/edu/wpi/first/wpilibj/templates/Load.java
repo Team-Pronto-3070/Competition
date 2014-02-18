@@ -7,10 +7,6 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Victor;
 
-/**
- *
- * @author pronto1
- */
 public class Load extends Thread {
 
     Victor victor;
