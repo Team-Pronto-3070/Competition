@@ -28,11 +28,12 @@ public class CentralCode extends IterativeRobot {
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
     double conf;
-    boolean atShoot, afterShoot, inRange;
+    boolean atShoot, afterShoot, inRange, tooClose, tooFar;
     int endTimer, noWait;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
+    SmartDashboard smart;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -160,12 +161,24 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
+        if(ultrasonic.getVoltage()<0.7){
+            tooClose = true;
+        } else{
+            tooClose = false;
+        }
+        smart.putBoolean("Too close", tooClose);
+        if(ultrasonic.getVoltage()>1){
+            tooFar = true;
+        } else{
+            tooFar = false;
+        }
+        smart.putBoolean("Too far", tooFar);
         if (ultrasonic.getVoltage() > 0.7 && ultrasonic.getVoltage() < 1) {
             inRange = true;
         } else{
             inRange = false;
         }
-        SmartDashboard.putBoolean("In Range", inRange);
+        smart.putBoolean("In range", inRange);
     }
 
     public void disabledInit() {
