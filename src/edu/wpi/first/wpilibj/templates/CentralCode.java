@@ -28,8 +28,8 @@ public class CentralCode extends IterativeRobot {
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
     double conf;
-    boolean ready, goShoot;
-    int i, noWait;
+    boolean atShoot, afterShoot;
+    int endTimer, noWait;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
@@ -70,10 +70,10 @@ public class CentralCode extends IterativeRobot {
 
         conf = 0;
         noWait = 0;
-        i = 0;
+        endTimer = 0;
         noWait = 0;
-        ready = false;
-        goShoot = false;
+        atShoot = false;
+        afterShoot = false;
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
         loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3);
@@ -85,80 +85,87 @@ public class CentralCode extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousInit() {
+        endTimer = 0;
         conf = 0;
         relay.set(Relay.Value.kOn);
         noWait = 0;
         sol1.set(true); //change it to fast setting
         sol2.set(false);
-        sol4.set(true);
-        sol5.set(false);
+        sol4.set(false);
+        sol5.set(true);
         sol7.set(true);
         sol8.set(false);
+        atShoot = false;
+        afterShoot = false;
     }
 
     public void autonomousPeriodic() {
-        if (!ready) {
-            conf = conf + SmartDashboard.getNumber("Confidence") - 70;
-            if (ultrasonic.getVoltage() <= .96) {
-                jag1.set(0);
-                jag3.set(0);
-                ready = true;
+        System.out.println("Confidence: " + conf);
+        if (!atShoot) {
+            if (ultrasonic.getVoltage() > 0.86) {
+                conf = conf + SmartDashboard.getNumber("Confidence") - 70;
+                jag1.set(-0.648);
+                jag2.set(-0.648);
+                jag3.set(0.6);
+                jag4.set(0.6);
+                System.out.println("Driving forward.");
+                //420 blaze it
             } else {
-                jag1.set(1);
-                jag3.set(-1);
+                jag1.set(0);
+                jag2.set(0);
+                jag3.set(0);
+                jag4.set(0);
+                atShoot = true;
+                System.out.println("Done 420 blazin'.");
             }
-            if (i >= 100) {
-                goShoot = false;
+        }
+        if (atShoot && !afterShoot) {
+            if (conf >= 40) {
+                System.out.println("Saw Target.");
                 sol7.set(false);
                 sol8.set(true);
-                i = 0;
-            }
-            if (ready && conf >= 40) {
-                goShoot = true;
-            }
-            if (ready && conf < 40) {
+                afterShoot = true;
+                System.out.println("Launching.");
+            } else {
+                if (noWait == 0) {
+                    System.out.println("Did not see target.");
+                }
                 noWait++;
-                if (noWait >= 40 && noWait < 70) {
-                    jag1.set(-1);
-                    jag3.set(1);
+                if (ultrasonic.getVoltage() > 0.85) {
+                    jag1.set(-0.216);
+                    jag2.set(-0.216);
+                    jag3.set(0.2);
+                    jag4.set(0.2);
                 }
-                if (noWait >= 70 && noWait < 110) {
-                    jag1.set(0);
-                    jag3.set(0);
+                if (ultrasonic.getVoltage() < 0.81) {
+                    jag1.set(0.216);
+                    jag2.set(0.216);
+                    jag3.set(-0.2);
+                    jag4.set(-0.2);
                 }
-                if (noWait >= 110 && noWait < 150) {
-                    jag1.set(1);
-                    jag3.set(-1);
-                }
-                if (noWait == 150) {
-                    goShoot = true;
+                if (noWait == 200) {
+                    sol7.set(false);
+                    sol8.set(true);
+                    afterShoot = true;
+                    System.out.println("Launching.");
                 }
             }
-            if (goShoot) {
+        }
+        if (afterShoot) {
+            if (endTimer < 100) {
+                endTimer++;
+                jag1.set(0);
+                jag2.set(0);
+                jag3.set(0);
+                jag4.set(0);
+                if (endTimer == 99) {
+                    System.out.println("Retracting Launcher.");
+                }
+            } else {
+                relay.set(Relay.Value.kOff);
                 sol7.set(true);
                 sol8.set(false);
-                sol7.set(true);
-                sol8.set(false);
-                i = 0;
-            }
-            if (ready && conf >= 40) {
-                goShoot = true;
-            }
-            if (ready && conf < 40) {
-                noWait++;
-            }
-            if (ready && conf < 40 && noWait == 150) {
-                goShoot = true;
-            }
-            if (goShoot && i < 3) {
-                i++;
-                sol4.set(false);
-                sol5.set(true);
-            }
-            if (goShoot && i >= 3) {
-                sol7.set(false);
-                sol8.set(true);
-                i++;
+                System.out.println("Autonomous Complete.");
             }
         }
     }
