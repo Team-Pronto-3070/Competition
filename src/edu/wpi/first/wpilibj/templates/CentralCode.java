@@ -24,7 +24,7 @@ public class CentralCode extends IterativeRobot {
     Victor victor;
     Solenoid sol1, sol2, sol4, sol5, sol7, sol8;
     Relay relay, compressor;
-    DigitalInput digi14, digi3;
+    DigitalInput digi14, digi13, digi3;
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
     double conf;
@@ -59,6 +59,7 @@ public class CentralCode extends IterativeRobot {
         compressor = new Relay(2);
 
         digi14 = new DigitalInput(14);
+        digi13 = new DigitalInput(13);
         digi3 = new DigitalInput(3);
 
         encoder = new AnalogChannel(2);
@@ -81,7 +82,7 @@ public class CentralCode extends IterativeRobot {
         checkGyro = true;
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
-        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3, smart);
+        loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi13, digi3, smart);
         drive.start();
         loadAndShoot.start();
         
@@ -251,12 +252,14 @@ public class CentralCode extends IterativeRobot {
 
     public void disabledInit() {
         drive.setRun(false);
+        loadAndShoot.setBooleansToZero();
         loadAndShoot.setRun(false);
     }
 
     /**
      * This function is called periodically during test mode
      */
-    public void testPeriodic() {
+    public void testPeriodic() { //charge the compressor
+        compressor.set(Relay.Value.kOn);
     }
 }

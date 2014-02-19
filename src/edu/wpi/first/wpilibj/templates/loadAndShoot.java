@@ -13,7 +13,7 @@ public class loadAndShoot extends Thread {
     Solenoid sol4, sol5, sol7, sol8;
     Victor victor;
     AnalogChannel encoder;
-    DigitalInput digi14, digi3;
+    DigitalInput digi14, digi13, digi3;
     Joystick xBox;
     Shoot shooter;
     boolean shooting = false; //starts the catapult
@@ -31,7 +31,7 @@ public class loadAndShoot extends Thread {
     boolean doNotSuck = false; //stops the autosuction from screwing up
     SmartDashboard smart;
 
-    public loadAndShoot(AnalogChannel e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d14, DigitalInput d3, SmartDashboard sd) {
+    public loadAndShoot(AnalogChannel e, Victor v, Solenoid s4, Solenoid s5, Solenoid s7, Solenoid s8, Joystick x, DigitalInput d14, DigitalInput d13, DigitalInput d3, SmartDashboard sd) {
         victor = v;
         encoder = e;
 
@@ -44,6 +44,7 @@ public class loadAndShoot extends Thread {
         xBox = x;
 
         digi14 = d14;
+        digi13 = d13;
         digi3 = d3;
 
         smart = sd;
@@ -56,6 +57,20 @@ public class loadAndShoot extends Thread {
 
     public void setRun(boolean run) {
         running = run;
+    }
+
+    public void setBooleansToZero() {
+        shooting = false;
+        loadingWithBall = false;
+        loadingWithoutBall = false;
+        unloading = false;
+        okToSuck = true;
+        sucking = false;
+        doNotSuck = false;
+        sol4.set(false);
+        sol5.set(true);
+        sol7.set(true);
+        sol8.set(false);
     }
 
     public void run() {
@@ -76,7 +91,6 @@ public class loadAndShoot extends Thread {
             suckingCount = 0;
             doNotSuck = false;
             while (running) {
-                System.out.println(encoder.getVoltage());
                 smart.putBoolean("auto suction enabled", !doNotSuck && okToSuck);
                 if (xBox.getRawAxis(6) == -1) {
                     System.out.println("reset everything");
@@ -88,7 +102,7 @@ public class loadAndShoot extends Thread {
                     okToSuck = false;
                     doNotSuck = false;
                 }
-                
+
                 //start end load
                 if (digi3.get() && !unloading) {//stops the loading
                     System.out.println("load stop");
@@ -112,7 +126,7 @@ public class loadAndShoot extends Thread {
                     okToSuck = true;
                     doNotSuck = false; //resets the autosuction stop
                 }
-                if (digi14.get() && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck) {
+                if ((digi14.get()||digi13.get()) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck) {
                     System.out.println("start suction");
                     sucking = true; //checks to see if ball is touching limit switch
                 }
