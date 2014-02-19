@@ -32,6 +32,8 @@ public class Drive extends Thread {
 
     public void run() {
         while (true) {
+            sol1.set(false);
+            sol2.set(true);
             while (running) {
                 if (xBox.getRawAxis(2) >= 0) {
                     speed = Math.sqrt(xBox.getRawAxis(2) * xBox.getRawAxis(2) * xBox.getRawAxis(2));
@@ -50,7 +52,9 @@ public class Drive extends Thread {
                     sol1.set(true);
                     sol2.set(false);
                 }
-                if (Math.abs((speed - turn) - leftspeed) < .1/*.075*/) { //don't skip target
+                if (Math.abs((speed - turn) - leftspeed) < .075/*
+                         * .075
+                         */) { //don't skip target
                     leftspeed = speed - turn;
                 }
                 if (leftspeed < speed - turn) { //ramp up
@@ -60,7 +64,9 @@ public class Drive extends Thread {
                     leftspeed = leftspeed - .1;
                 }
 
-                if (Math.abs((speed + turn) - leftspeed) < .1/*0.075*/) { //don't skip target
+                if (Math.abs((speed + turn) - leftspeed) < .075/*
+                         * 0.075
+                         */) { //don't skip target
                     rightspeed = speed + turn;
                 }
                 if (rightspeed < speed + turn) { //ramp up
@@ -70,10 +76,10 @@ public class Drive extends Thread {
                     rightspeed = rightspeed - .1;
                 }
 
-                if (Math.abs(rightspeed) < .125) { //dead zone
+                if (Math.abs(rightspeed) < .05) { //dead zone
                     rightspeed = 0;
                 }
-                if (Math.abs(leftspeed) < .125) { //dead zone
+                if (Math.abs(leftspeed) < .05) { //dead zone
                     leftspeed = 0;
                 }
                 jagleft1.set(leftspeed);

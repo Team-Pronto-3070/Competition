@@ -19,7 +19,7 @@ public class SuckUpBall {
     }
 
     public void suckItUp() {
-        victor.set(-0.3);
+        victor.set(-0.4);
         sol4.set(true);
         sol5.set(false);
     }

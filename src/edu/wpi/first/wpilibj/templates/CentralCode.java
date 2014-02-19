@@ -210,13 +210,14 @@ public class CentralCode extends IterativeRobot {
 
     public void teleopPeriodic() {
         smart.putBoolean("fast gear", sol1.get() == true && sol2.get() == false);
+        smart.putBoolean("slow gear", sol1.get() == false && sol2.get() == true);
 
         if (gyro.getAngle() > 360 || gyro.getAngle() < -360) {
             gyro.reset();
         }
         smart.putNumber("Angle", gyro.getAngle());
 
-        if (ultrasonic.getVoltage() < 0.7) {
+        if (ultrasonic.getVoltage() < 0.5) {
             tooClose = true;
         } else {
             tooClose = false;
@@ -230,7 +231,7 @@ public class CentralCode extends IterativeRobot {
         }
         smart.putBoolean("Too far", tooFar);
 
-        if (ultrasonic.getVoltage() > 0.7 && ultrasonic.getVoltage() < 1) {
+        if (ultrasonic.getVoltage() >= 0.5 && ultrasonic.getVoltage() <= 1) {
             inRange = true;
         } else {
             inRange = false;
@@ -238,9 +239,8 @@ public class CentralCode extends IterativeRobot {
         smart.putBoolean("In range", inRange);
     }
 
-    public void TeleopdisabledInit() {
+    public void disabledInit() {
         drive.setRun(false);
-
         loadAndShoot.setRun(false);
     }
 
