@@ -84,12 +84,16 @@ public class CentralCode extends IterativeRobot {
         loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi3, smart);
         drive.start();
         loadAndShoot.start();
+        
+        compressor.set(Relay.Value.kOn);
     }
 
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousInit() {
+        compressor.set(Relay.Value.kOn);
+        
         gyro.reset();
         endTimer = 0;
         conf = 0;
@@ -204,6 +208,8 @@ public class CentralCode extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopInit() {
+        compressor.set(Relay.Value.kOn);
+        
         gyro.reset();
         relay.set(Relay.Value.kOff);
         drive.setRun(true);
