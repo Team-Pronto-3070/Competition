@@ -23,7 +23,7 @@ public class CentralCode extends IterativeRobot {
     Joystick xBox;
     Victor victor;
     Solenoid sol1, sol2, sol4, sol5, sol7, sol8;
-    Relay relay;
+    Relay relay, compressor;
     DigitalInput digi14, digi3;
     AnalogChannel ultrasonic, encoder;
     Gyro gyro;
@@ -56,6 +56,7 @@ public class CentralCode extends IterativeRobot {
         sol8 = new Solenoid(8);
 
         relay = new Relay(1);
+        compressor = new Relay(2);
 
         digi14 = new DigitalInput(14);
         digi3 = new DigitalInput(3);
@@ -109,6 +110,7 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
+        compressor.set(Relay.Value.kOn);
         relay.set(Relay.Value.kOn);
         System.out.println("Confidence: " + conf);
         if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
@@ -209,6 +211,8 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
+        compressor.set(Relay.Value.kOn);
+        
         smart.putBoolean("fast gear", sol1.get() == true && sol2.get() == false);
         smart.putBoolean("slow gear", sol1.get() == false && sol2.get() == true);
 
