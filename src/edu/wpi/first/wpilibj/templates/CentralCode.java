@@ -173,8 +173,8 @@ public class CentralCode extends IterativeRobot {
         if (atShoot && !afterShoot) { //once in position, do the following
             if (conf >= 40) { //if the target has been seen, do the following
                 System.out.println("Saw Target.");
-                sol7.set(true); //launch the catapult, switched these??????????????????????
-                sol8.set(false);
+                sol7.set(false); //launch the catapult
+                sol8.set(true);
                 afterShoot = true; //tell the program it has fired
                 System.out.println("Launching.");
             }
@@ -184,15 +184,15 @@ public class CentralCode extends IterativeRobot {
                 }
                 noWait++; //count the timer up
                 if (noWait == 200) { //once the rimer reaches 4 seconds, do the following
-                    sol7.set(true); //launch the catapult, switched these??????????????????
-                    sol8.set(false);
+                    sol7.set(false); //launch the catapult
+                    sol8.set(true);
                     afterShoot = true; //tell the program it has fired
                     System.out.println("Launching.");
                 }
             }
         }
         if (afterShoot) { //once the program knows it has fired, do the following
-            if (endTimer < 100) { // for two seconds after firing, do the following
+            if (endTimer < 100) { // for two seconds after firing, do the following CAN ADD GYRO CONTROL INSTEAD
                 endTimer++; //run the ending timer
                 jag1.set(0); //stop any motion of the robot
                 jag2.set(0);
