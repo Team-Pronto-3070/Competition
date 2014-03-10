@@ -117,7 +117,6 @@ public class CentralCode extends IterativeRobot {
     public void autonomousPeriodic() {
         compressor.set(Relay.Value.kOn);
         relay.set(Relay.Value.kOn);
-        System.out.println("Confidence: " + conf);
         if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
             if (ultrasonic.getVoltage() > 0.86) { //if not in range, do the following
                 conf = conf + SmartDashboard.getNumber("Confidence") - 70; //add to the total confidence
