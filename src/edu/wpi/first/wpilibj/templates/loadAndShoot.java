@@ -126,7 +126,7 @@ public class loadAndShoot extends Thread {
                     okToSuck = true;
                     doNotSuck = false; //resets the autosuction stop
                 }
-                if ((digi14.get()||digi13.get()) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck) {
+                if ((digi14.get() || digi13.get()) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting && !sucking && okToSuck && !doNotSuck && !digi3.get()) {
                     System.out.println("start suction");
                     sucking = true; //checks to see if ball is touching limit switch
                 }

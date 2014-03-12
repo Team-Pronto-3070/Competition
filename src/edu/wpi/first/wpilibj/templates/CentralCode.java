@@ -29,7 +29,7 @@ public class CentralCode extends IterativeRobot {
     Gyro gyro;
     double conf;
     boolean atShoot, checkGyro, afterShoot, inRange, tooClose, tooFar;
-    int endTimer, noWait, gyroTimer;
+    int endTimer, noWait, gyroTimer, hotWaitCount;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
@@ -66,7 +66,7 @@ public class CentralCode extends IterativeRobot {
         ultrasonic = new AnalogChannel(3);
 
         gyro = new Gyro(1);
-        gyro.setSensitivity(0.07);
+        gyro.setSensitivity(0.007);
         gyro.reset();
 
         xBox = new Joystick(1);
@@ -83,9 +83,7 @@ public class CentralCode extends IterativeRobot {
 
         drive = new Drive(jag1, jag2, jag3, jag4, sol1, sol2, xBox);
         loadAndShoot = new loadAndShoot(encoder, victor, sol4, sol5, sol7, sol8, xBox, digi14, digi13, digi3, smart);
-        drive.start();
-        loadAndShoot.start();
-        
+
         compressor.set(Relay.Value.kOn);
     }
 
@@ -94,13 +92,14 @@ public class CentralCode extends IterativeRobot {
      */
     public void autonomousInit() {
         compressor.set(Relay.Value.kOn);
-        
+
         gyro.reset();
         endTimer = 0;
         conf = 0;
         relay.set(Relay.Value.kOn);
         noWait = 0;
         gyroTimer = 0;
+        hotWaitCount = 0;
 
         sol1.set(true); //change it to fast setting
         sol2.set(false);
@@ -109,19 +108,26 @@ public class CentralCode extends IterativeRobot {
         sol7.set(true);
         sol8.set(false);
 
+        drive.setRun(false);
+        loadAndShoot.setRun(false);
+
         atShoot = false;
         afterShoot = false;
         checkGyro = false;
     }
 
     public void autonomousPeriodic() {
+        drive.setRun(false);
+        loadAndShoot.setRun(false);
+
         compressor.set(Relay.Value.kOn);
         relay.set(Relay.Value.kOn);
+        System.out.println(ultrasonic.getAverageVoltage());
         if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
-            if (ultrasonic.getVoltage() > 0.86) { //if not in range, do the following
+            if (ultrasonic.getAverageVoltage() > 1.1) { //if not in range, do the following
                 conf = conf + SmartDashboard.getNumber("Confidence") - 70; //add to the total confidence
-                jag1.set(-0.648); //move towards the goal
-                jag2.set(-0.648);
+                jag1.set(-0.6); //move towards the goal
+                jag2.set(-0.6);
                 jag3.set(0.6);
                 jag4.set(0.6);
                 System.out.println("Driving forwards.");
@@ -137,15 +143,15 @@ public class CentralCode extends IterativeRobot {
         if (checkGyro) {
             gyroTimer++;
             if (gyro.getAngle() < -2) { //if the robot is pointed to the left, do the following
-                jag1.set(-0.108); //turn right
-                jag2.set(-0.108);
+                jag1.set(-0.1); //turn right
+                jag2.set(-0.1);
                 jag3.set(-0.1);
                 jag4.set(-0.1);
                 System.out.println("Orienting right.");
             }
             if (gyro.getAngle() > 2) { //if the robot is pointed to the right, do the following
-                jag1.set(0.108); //turn left
-                jag2.set(0.108);
+                jag1.set(0.1); //turn left
+                jag2.set(0.1);
                 jag3.set(0.1);
                 jag4.set(0.1);
                 System.out.println("Orienting left.");
@@ -159,7 +165,7 @@ public class CentralCode extends IterativeRobot {
                 atShoot = true; //tell the program that the robot is in position
                 System.out.println("Oriented.");
             }
-            if (gyroTimer == 30) { //after three fifths second of checking the gyro, do the following
+            if (gyroTimer >= 50) { //after three fifths second of checking the gyro, do the following
                 jag1.set(0); //stop the motion of the robot
                 jag2.set(0);
                 jag3.set(0);
@@ -172,10 +178,14 @@ public class CentralCode extends IterativeRobot {
         if (atShoot && !afterShoot) { //once in position, do the following
             if (conf >= 40) { //if the target has been seen, do the following
                 System.out.println("Saw Target.");
-                sol7.set(false); //launch the catapult
-                sol8.set(true);
-                afterShoot = true; //tell the program it has fired
-                System.out.println("Launching.");
+                if (hotWaitCount <= 50) {
+                    hotWaitCount++;
+                } else {
+                    sol7.set(false); //launch the catapult
+                    sol8.set(true);
+                    afterShoot = true; //tell the program it has fired
+                    System.out.println("Launching.");
+                }
             }
             if (conf < 40) { //if the target has not been seen, do the following
                 if (noWait == 0) { //reset the timer for this occasion
@@ -191,13 +201,15 @@ public class CentralCode extends IterativeRobot {
             }
         }
         if (afterShoot) { //once the program knows it has fired, do the following
-            if (endTimer < 100) { // for two seconds after firing, do the following CAN ADD GYRO CONTROL INSTEAD
+            sol7.set(false);
+            sol8.set(true);
+            if (endTimer < 40) { // for two seconds after firing, do the following CAN ADD GYRO CONTROL INSTEAD
                 endTimer++; //run the ending timer
                 jag1.set(0); //stop any motion of the robot
                 jag2.set(0);
                 jag3.set(0);
                 jag4.set(0);
-                if (endTimer == 100) { //at end of autonomous, do the following
+                if (endTimer == 40) { //at end of autonomous, do the following
                     System.out.println("Autonomous Complete.");
                 }
             }
@@ -208,24 +220,28 @@ public class CentralCode extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopInit() {
+        drive.start();
+        loadAndShoot.start();
         compressor.set(Relay.Value.kOn);
-        
-        gyro.reset();
         relay.set(Relay.Value.kOff);
         drive.setRun(true);
         loadAndShoot.setRun(true);
     }
 
     public void teleopPeriodic() {
+        System.out.println("Ultrasonic: " + ultrasonic.getAverageVoltage());
         compressor.set(Relay.Value.kOn);
-        
+
+        //smart dashboard stuff
         smart.putBoolean("fast gear", sol1.get() == true && sol2.get() == false);
         smart.putBoolean("slow gear", sol1.get() == false && sol2.get() == true);
 
         if (gyro.getAngle() > 360 || gyro.getAngle() < -360) {
             gyro.reset();
         }
-        smart.putNumber("Angle", gyro.getAngle());
+        smart.putBoolean("good angle", gyro.getAngle() < 30 && gyro.getAngle() > -30);
+        smart.putBoolean("too far right", gyro.getAngle() > 30 && gyro.getAngle() < 180);
+        smart.putBoolean("too far left", gyro.getAngle() < -30 && gyro.getAngle() > -180);
 
         if (ultrasonic.getVoltage() < 0.5) {
             tooClose = true;
@@ -258,7 +274,7 @@ public class CentralCode extends IterativeRobot {
     /**
      * This function is called periodically during test mode
      */
-    public void testPeriodic() { //charge the compressor
+    public void testPeriodic() { //charge the compresso
         compressor.set(Relay.Value.kOn);
     }
 }
