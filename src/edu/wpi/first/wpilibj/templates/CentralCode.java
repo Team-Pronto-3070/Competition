@@ -29,7 +29,7 @@ public class CentralCode extends IterativeRobot {
     Gyro gyro;
     double conf;
     boolean atShoot, checkGyro, afterShoot, inRange, tooClose, tooFar;
-    int endTimer, noWait, gyroTimer, hotWaitCount;
+    int endTimer, noWait, gyroTimer, hotWaitCount, delayCount;
     NetworkTable server = NetworkTable.getTable("smartDashboard");
     Drive drive;
     loadAndShoot loadAndShoot;
@@ -100,6 +100,7 @@ public class CentralCode extends IterativeRobot {
         noWait = 0;
         gyroTimer = 0;
         hotWaitCount = 0;
+        delayCount = 0;
 
         sol1.set(true); //change it to fast setting
         sol2.set(false);
@@ -122,95 +123,99 @@ public class CentralCode extends IterativeRobot {
 
         compressor.set(Relay.Value.kOn);
         relay.set(Relay.Value.kOn);
-        System.out.println(ultrasonic.getAverageVoltage());
-        if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
-            if (ultrasonic.getAverageVoltage() > 1.1) { //if not in range, do the following
-                conf = conf + SmartDashboard.getNumber("Confidence") - 70; //add to the total confidence
-                jag1.set(-0.6); //move towards the goal
-                jag2.set(-0.6);
-                jag3.set(0.6);
-                jag4.set(0.6);
-                System.out.println("Driving forwards.");
-            } else { //once in range, do the follwing
-                jag1.set(0); //stop moving forwards
-                jag2.set(0);
-                jag3.set(0);
-                jag4.set(0);
-                checkGyro = true; // tell the program to check the gyro
-                System.out.println("Checking gyro.");
-            }
-        }
-        if (checkGyro) {
-            gyroTimer++;
-            if (gyro.getAngle() < -2) { //if the robot is pointed to the left, do the following
-                jag1.set(-0.1); //turn right
-                jag2.set(-0.1);
-                jag3.set(-0.1);
-                jag4.set(-0.1);
-                System.out.println("Orienting right.");
-            }
-            if (gyro.getAngle() > 2) { //if the robot is pointed to the right, do the following
-                jag1.set(0.1); //turn left
-                jag2.set(0.1);
-                jag3.set(0.1);
-                jag4.set(0.1);
-                System.out.println("Orienting left.");
-            }
-            if (gyro.getAngle() > -2 && gyro.getAngle() < 2) { // if the robot is pointed towards the goal, do the following
-                jag1.set(0); //stop the motion of the robot
-                jag2.set(0);
-                jag3.set(0);
-                jag4.set(0);
-                checkGyro = false; //stop looking at the gyro
-                atShoot = true; //tell the program that the robot is in position
-                System.out.println("Oriented.");
-            }
-            if (gyroTimer >= 50) { //after three fifths second of checking the gyro, do the following
-                jag1.set(0); //stop the motion of the robot
-                jag2.set(0);
-                jag3.set(0);
-                jag4.set(0);
-                checkGyro = false; //stop looking at the gyro
-                atShoot = true; //tell the program that the robot is in position
-                System.out.println("Gyro check timed out.");
-            }
-        }
-        if (atShoot && !afterShoot) { //once in position, do the following
-            if (conf >= 40) { //if the target has been seen, do the following
-                System.out.println("Saw Target.");
-                if (hotWaitCount <= 50) {
-                    hotWaitCount++;
-                } else {
-                    sol7.set(false); //launch the catapult
-                    sol8.set(true);
-                    afterShoot = true; //tell the program it has fired
-                    System.out.println("Launching.");
+        
+        if (delayCount <= 10) {
+            delayCount++;
+        } else {
+            if (!checkGyro && !atShoot) { //if program does not know it's in range, do the following
+                if (ultrasonic.getAverageVoltage() > 0.9) { //if not in range, do the following
+                    conf = conf + SmartDashboard.getNumber("Confidence") - 70; //add to the total confidence
+                    jag1.set(-0.6); //move towards the goal
+                    jag2.set(-0.6);
+                    jag3.set(0.6);
+                    jag4.set(0.6);
+                    System.out.println("Driving forwards.");
+                } else { //once in range, do the follwing
+                    jag1.set(0); //stop moving forwards
+                    jag2.set(0);
+                    jag3.set(0);
+                    jag4.set(0);
+                    checkGyro = true; // tell the program to check the gyro
+                    System.out.println("Checking gyro.");
                 }
             }
-            if (conf < 40) { //if the target has not been seen, do the following
-                if (noWait == 0) { //reset the timer for this occasion
-                    System.out.println("Did not see target.");
+            if (checkGyro) {
+                gyroTimer++;
+                if (gyro.getAngle() < -2) { //if the robot is pointed to the left, do the following
+                    jag1.set(-0.1); //turn right
+                    jag2.set(-0.1);
+                    jag3.set(-0.1);
+                    jag4.set(-0.1);
+                    System.out.println("Orienting right.");
                 }
-                noWait++; //count the timer up
-                if (noWait == 200) { //once the rimer reaches 4 seconds, do the following
-                    sol7.set(false); //launch the catapult
-                    sol8.set(true);
-                    afterShoot = true; //tell the program it has fired
-                    System.out.println("Launching.");
+                if (gyro.getAngle() > 2) { //if the robot is pointed to the right, do the following
+                    jag1.set(0.1); //turn left
+                    jag2.set(0.1);
+                    jag3.set(0.1);
+                    jag4.set(0.1);
+                    System.out.println("Orienting left.");
+                }
+                if (gyro.getAngle() > -2 && gyro.getAngle() < 2) { // if the robot is pointed towards the goal, do the following
+                    jag1.set(0); //stop the motion of the robot
+                    jag2.set(0);
+                    jag3.set(0);
+                    jag4.set(0);
+                    checkGyro = false; //stop looking at the gyro
+                    atShoot = true; //tell the program that the robot is in position
+                    System.out.println("Oriented.");
+                }
+                if (gyroTimer >= 50) { //after three fifths second of checking the gyro, do the following
+                    jag1.set(0); //stop the motion of the robot
+                    jag2.set(0);
+                    jag3.set(0);
+                    jag4.set(0);
+                    checkGyro = false; //stop looking at the gyro
+                    atShoot = true; //tell the program that the robot is in position
+                    System.out.println("Gyro check timed out.");
                 }
             }
-        }
-        if (afterShoot) { //once the program knows it has fired, do the following
-            sol7.set(false);
-            sol8.set(true);
-            if (endTimer < 40) { // for two seconds after firing, do the following CAN ADD GYRO CONTROL INSTEAD
-                endTimer++; //run the ending timer
-                jag1.set(0); //stop any motion of the robot
-                jag2.set(0);
-                jag3.set(0);
-                jag4.set(0);
-                if (endTimer == 40) { //at end of autonomous, do the following
-                    System.out.println("Autonomous Complete.");
+            if (atShoot && !afterShoot) { //once in position, do the following
+                if (conf >= 40) { //if the target has been seen, do the following
+                    System.out.println("Saw Target.");
+                    if (hotWaitCount <= 50) {
+                        hotWaitCount++;
+                    } else {
+                        sol7.set(false); //launch the catapult
+                        sol8.set(true);
+                        afterShoot = true; //tell the program it has fired
+                        System.out.println("Launching.");
+                    }
+                }
+                if (conf < 40) { //if the target has not been seen, do the following
+                    if (noWait == 0) { //reset the timer for this occasion
+                        System.out.println("Did not see target.");
+                    }
+                    noWait++; //count the timer up
+                    if (noWait == 200) { //once the rimer reaches 4 seconds, do the following
+                        sol7.set(false); //launch the catapult
+                        sol8.set(true);
+                        afterShoot = true; //tell the program it has fired
+                        System.out.println("Launching.");
+                    }
+                }
+            }
+            if (afterShoot) { //once the program knows it has fired, do the following
+                sol7.set(false);
+                sol8.set(true);
+                if (endTimer < 40) { // for two seconds after firing, do the following CAN ADD GYRO CONTROL INSTEAD
+                    endTimer++; //run the ending timer
+                    jag1.set(0); //stop any motion of the robot
+                    jag2.set(0);
+                    jag3.set(0);
+                    jag4.set(0);
+                    if (endTimer == 40) { //at end of autonomous, do the following
+                        System.out.println("Autonomous Complete.");
+                    }
                 }
             }
         }
@@ -229,7 +234,6 @@ public class CentralCode extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        System.out.println("Ultrasonic: " + ultrasonic.getAverageVoltage());
         compressor.set(Relay.Value.kOn);
 
         //smart dashboard stuff
@@ -257,7 +261,7 @@ public class CentralCode extends IterativeRobot {
         }
         smart.putBoolean("Too far", tooFar);
 
-        if (ultrasonic.getVoltage() >= 0.5 && ultrasonic.getVoltage() <= 1) {
+        if (ultrasonic.getVoltage() >= 0.55 && ultrasonic.getVoltage() <= 0.8) {
             inRange = true;
         } else {
             inRange = false;

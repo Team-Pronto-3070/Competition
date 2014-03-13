@@ -19,7 +19,7 @@ public class Load extends Thread {
 
     public void loadWithBall() {
         if (encoder.getVoltage() > 3 || encoder.getVoltage() < 0.5) {
-            victor.set(0.6); // can increase to help load speed
+            victor.set(1); // can increase to help load speed (usually set to 0.6)
         } else {
             victor.set(0.1);
         }

@@ -101,18 +101,9 @@ public class loadAndShoot extends Thread {
                     sucking = false;
                     okToSuck = false;
                     doNotSuck = false;
+                    sol7.set(true);
+                    sol8.set(false);
                 }
-
-                //start end load
-                if (digi3.get() && !unloading) {//stops the loading
-                    System.out.println("load stop");
-                    victor.set(0);
-                    sol4.set(false); //disables the suction
-                    sol5.set(true);
-                    loadingWithBall = false;
-                    loadingWithoutBall = false;
-                }
-                // end end load
 
                 //begin autosuction and manual suction
                 if (xBox.getRawButton(3)) { //toggle off
@@ -143,6 +134,17 @@ public class loadAndShoot extends Thread {
                     doNotSuck = true; //prevents the autosuction from activating again
                 }
                 //end autosuction and manual suction
+                
+                //start end load
+                if (digi3.get() && !unloading) {//stops the loading
+                    //System.out.println("load stop");
+                    victor.set(0);
+                    sol4.set(false); //disables the suction
+                    sol5.set(true);
+                    loadingWithBall = false;
+                    loadingWithoutBall = false;
+                }
+                // end end load
 
                 //begin loading
                 if (xBox.getRawButton(6) && !loadingWithBall && !loadingWithoutBall && !unloading && !shooting) {
